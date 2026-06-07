@@ -1,0 +1,209 @@
+{% extends 'clinic/base.html' %}
+
+{% block title %}Doctor Appointments - Dr. Annops Dental Clinic{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2>Patient Appointments</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            {% if appointments %}
+                <ul class="nav nav-tabs mb-3" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#pending" data-bs-toggle="tab">Pending</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#confirmed" data-bs-toggle="tab">Confirmed</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#completed" data-bs-toggle="tab">Completed</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#all" data-bs-toggle="tab">All</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="pending">
+                        {% with pending=appointments|dictsort:"status"|selectattr:"status","exactequal","pending" %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Patient</th>
+                                            <th>Date & Time</th>
+                                            <th>Reason</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for appointment in pending %}
+                                            <tr>
+                                                <td>
+                                                    <strong>{{ appointment.patient.user.first_name }} {{ appointment.patient.user.last_name }}</strong><br>
+                                                    <small class="text-muted">{{ appointment.patient.phone }}</small>
+                                                </td>
+                                                <td>
+                                                    {{ appointment.appointment_date|date:"d M Y" }}<br>
+                                                    <i class="bi bi-clock"></i> {{ appointment.appointment_time|time:"H:i" }}
+                                                </td>
+                                                <td>{{ appointment.reason|truncatewords:10 }}</td>
+                                                <td>
+                                                    <span class="appointment-status status-{{ appointment.status }}">
+                                                        {{ appointment.get_status_display }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                                                    <a href="{% url 'confirm_appointment' appointment.id %}" class="btn btn-sm btn-outline-success">Confirm</a>
+                                                </td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr><td colspan="5" class="text-center text-muted">No pending appointments</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endwith %}
+                    </div>
+
+                    <div class="tab-pane fade" id="confirmed">
+                        {% with confirmed=appointments|selectattr:"status","exactequal","confirmed" %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Patient</th>
+                                            <th>Date & Time</th>
+                                            <th>Reason</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for appointment in confirmed %}
+                                            <tr>
+                                                <td>
+                                                    <strong>{{ appointment.patient.user.first_name }} {{ appointment.patient.user.last_name }}</strong><br>
+                                                    <small class="text-muted">{{ appointment.patient.phone }}</small>
+                                                </td>
+                                                <td>
+                                                    {{ appointment.appointment_date|date:"d M Y" }}<br>
+                                                    <i class="bi bi-clock"></i> {{ appointment.appointment_time|time:"H:i" }}
+                                                </td>
+                                                <td>{{ appointment.reason|truncatewords:10 }}</td>
+                                                <td>
+                                                    <span class="appointment-status status-{{ appointment.status }}">
+                                                        {{ appointment.get_status_display }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                                                </td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr><td colspan="5" class="text-center text-muted">No confirmed appointments</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endwith %}
+                    </div>
+
+                    <div class="tab-pane fade" id="completed">
+                        {% with completed=appointments|selectattr:"status","exactequal","completed" %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Patient</th>
+                                            <th>Date & Time</th>
+                                            <th>Reason</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for appointment in completed %}
+                                            <tr>
+                                                <td>
+                                                    <strong>{{ appointment.patient.user.first_name }} {{ appointment.patient.user.last_name }}</strong><br>
+                                                    <small class="text-muted">{{ appointment.patient.phone }}</small>
+                                                </td>
+                                                <td>
+                                                    {{ appointment.appointment_date|date:"d M Y" }}<br>
+                                                    <i class="bi bi-clock"></i> {{ appointment.appointment_time|time:"H:i" }}
+                                                </td>
+                                                <td>{{ appointment.reason|truncatewords:10 }}</td>
+                                                <td>
+                                                    <span class="appointment-status status-{{ appointment.status }}">
+                                                        {{ appointment.get_status_display }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                                                </td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr><td colspan="5" class="text-center text-muted">No completed appointments</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endwith %}
+                    </div>
+
+                    <div class="tab-pane fade" id="all">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Date & Time</th>
+                                        <th>Reason</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for appointment in appointments %}
+                                        <tr>
+                                            <td>
+                                                <strong>{{ appointment.patient.user.first_name }} {{ appointment.patient.user.last_name }}</strong><br>
+                                                <small class="text-muted">{{ appointment.patient.phone }}</small>
+                                            </td>
+                                            <td>
+                                                {{ appointment.appointment_date|date:"d M Y" }}<br>
+                                                <i class="bi bi-clock"></i> {{ appointment.appointment_time|time:"H:i" }}
+                                            </td>
+                                            <td>{{ appointment.reason|truncatewords:10 }}</td>
+                                            <td>
+                                                <span class="appointment-status status-{{ appointment.status }}">
+                                                    {{ appointment.get_status_display }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> No appointments available.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

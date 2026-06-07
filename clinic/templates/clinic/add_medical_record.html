@@ -1,0 +1,73 @@
+{% extends 'clinic/base.html' %}
+
+{% block title %}Add Medical Record - Dr. Annops Dental Clinic{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Add Medical Record</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label for="id_record_type" class="form-label">Record Type</label>
+                            {{ form.record_type }}
+                            <small class="text-muted">E.g., X-ray, CT Scan, Lab Report, etc.</small>
+                            {% if form.record_type.errors %}<div class="text-danger small mt-1">{{ form.record_type.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">Description</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}<div class="text-danger small mt-1">{{ form.description.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_file" class="form-label">Upload File</label>
+                            {{ form.file }}
+                            <small class="text-muted">Accepted formats: PDF, JPG, PNG, etc.</small>
+                            {% if form.file.errors %}<div class="text-danger small mt-1">{{ form.file.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_notes" class="form-label">Additional Notes</label>
+                            {{ form.notes }}
+                            {% if form.notes.errors %}<div class="text-danger small mt-1">{{ form.notes.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-primary w-100">Save Record</button>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="{% url 'medical_records' %}" class="btn btn-outline-secondary w-100">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    input[type="text"],
+    input[type="file"],
+    textarea,
+    select {
+        border-radius: 0.5rem;
+        border: 1px solid #ddd;
+        padding: 0.75rem;
+        width: 100%;
+    }
+</style>
+{% endblock %}

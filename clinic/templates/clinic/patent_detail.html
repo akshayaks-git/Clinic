@@ -1,0 +1,278 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Patent Invention Details - Dental Clinic{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h1><i class="fas fa-lightbulb"></i> {{ patent.title }}</h1>
+                    <p class="text-muted">Patent ID: #{{ patent.id }}</p>
+                </div>
+                <div>
+                    {% if patent.status == 'draft' %}
+                        <span class="badge bg-secondary p-3">Draft</span>
+                    {% elif patent.status == 'submitted' %}
+                        <span class="badge bg-warning p-3">Submitted</span>
+                    {% elif patent.status == 'under_review' %}
+                        <span class="badge bg-warning p-3">Under Review</span>
+                    {% elif patent.status == 'approved' %}
+                        <span class="badge bg-success p-3">Approved</span>
+                    {% elif patent.status == 'rejected' %}
+                        <span class="badge bg-danger p-3">Rejected</span>
+                    {% elif patent.status == 'filed' %}
+                        <span class="badge bg-info p-3">Filed with Patent Office</span>
+                    {% elif patent.status == 'granted' %}
+                        <span class="badge bg-success p-3">Patent Granted</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <a href="{% url 'patent_update' patent.id %}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a href="{% url 'patent_delete' patent.id %}" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                    <a href="{% url 'patent_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+
+            <!-- Applicant Information -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-user"></i> Applicant Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Applicant Name:</strong><br>{{ patent.applicant_name }}</p>
+                            <p><strong>Clinic Name:</strong><br>{{ patent.clinic_name }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Phone Number:</strong><br>{{ patent.phone_number }}</p>
+                            <p><strong>Email Address:</strong><br>{{ patent.email_address }}</p>
+                        </div>
+                    </div>
+                    <p><strong>Clinic Address:</strong><br>{{ patent.clinic_address|linebreaks }}</p>
+                </div>
+            </div>
+
+            <!-- Inventor Details -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-people-arrows"></i> Inventor Details</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Inventor Names:</strong><br>{{ patent.inventor_names|linebreaks }}</p>
+                    {% if patent.inventor_designations %}
+                        <p><strong>Designations:</strong><br>{{ patent.inventor_designations|linebreaks }}</p>
+                    {% endif %}
+                    {% if patent.inventor_contact %}
+                        <p><strong>Contact Numbers:</strong><br>{{ patent.inventor_contact|linebreaks }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Innovation Details -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-cogs"></i> Innovation Details</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Type of Innovation:</strong><br>
+                        <span class="badge bg-info">{{ patent.get_innovation_type_display }}</span>
+                    </p>
+                    
+                    <p><strong>Problem Being Solved:</strong><br>{{ patent.problem_statement|linebreaks }}</p>
+                    
+                    <p><strong>Detailed Description:</strong><br>{{ patent.detailed_description|linebreaks }}</p>
+                    
+                    <p><strong>Novel Features:</strong><br>{{ patent.novel_features|linebreaks }}</p>
+                    
+                    <p><strong>Advantages:</strong><br>{{ patent.advantages|linebreaks }}</p>
+                </div>
+            </div>
+
+            <!-- Technical Documentation -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-file-pdf"></i> Technical Documentation</h5>
+                </div>
+                <div class="card-body">
+                    {% if patent.technical_drawings %}
+                        <p>
+                            <strong>Technical Drawings:</strong><br>
+                            <a href="{{ patent.technical_drawings.url }}" class="btn btn-sm btn-info" download>
+                                <i class="fas fa-download"></i> Download Drawings
+                            </a>
+                        </p>
+                    {% endif %}
+                    
+                    {% if patent.technical_specifications %}
+                        <p>
+                            <strong>Technical Specifications:</strong><br>
+                            <a href="{{ patent.technical_specifications.url }}" class="btn btn-sm btn-info" download>
+                                <i class="fas fa-download"></i> Download Specifications
+                            </a>
+                        </p>
+                    {% endif %}
+                    
+                    {% if not patent.technical_drawings and not patent.technical_specifications %}
+                        <p class="text-muted"><i class="fas fa-info-circle"></i> No technical documentation uploaded.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Prior Art & Disclosure -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-search"></i> Prior Art & Disclosure</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Prior Art Search Conducted:</strong><br>
+                        {% if patent.prior_art_search_done %}
+                            <span class="badge bg-success">Yes</span>
+                        {% else %}
+                            <span class="badge bg-danger">No</span>
+                        {% endif %}
+                    </p>
+                    
+                    {% if patent.prior_art_details %}
+                        <p><strong>Search Details:</strong><br>{{ patent.prior_art_details|linebreaks }}</p>
+                    {% endif %}
+                    
+                    <p>
+                        <strong>Public Disclosure Made:</strong><br>
+                        {% if patent.public_disclosure %}
+                            <span class="badge bg-success">Yes</span>
+                        {% else %}
+                            <span class="badge bg-danger">No</span>
+                        {% endif %}
+                    </p>
+                    
+                    {% if patent.public_disclosure_details %}
+                        <p><strong>Disclosure Details:</strong><br>{{ patent.public_disclosure_details|linebreaks }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Commercial Information -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-line"></i> Commercial Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Expected Applications:</strong><br>{{ patent.expected_applications|linebreaks }}</p>
+                    <p><strong>Target Market:</strong><br>{{ patent.target_market|linebreaks }}</p>
+                    {% if patent.estimated_commercial_value %}
+                        <p><strong>Estimated Commercial Value:</strong><br>{{ patent.estimated_commercial_value }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Review Information (if admin/reviewer) -->
+            {% if user.is_staff or user.is_superuser %}
+                <div class="card mb-4">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0"><i class="fas fa-clipboard-check"></i> Review Information</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if patent.patentability_assessment %}
+                            <p>
+                                <strong>Patentability Assessment:</strong><br>
+                                <span class="badge bg-primary">{{ patent.get_patentability_assessment_display }}</span>
+                            </p>
+                        {% endif %}
+                        
+                        {% if patent.reviewer_name %}
+                            <p>
+                                <strong>Reviewer Name:</strong><br>
+                                {{ patent.reviewer_name }}
+                            </p>
+                        {% endif %}
+                        
+                        {% if patent.review_date %}
+                            <p>
+                                <strong>Review Date:</strong><br>
+                                {{ patent.review_date|date:"M d, Y" }}
+                            </p>
+                        {% endif %}
+                        
+                        {% if patent.review_notes %}
+                            <p><strong>Review Notes:</strong><br>{{ patent.review_notes|linebreaks }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- System Information -->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> System Information</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Created:</strong> {{ patent.created_at|date:"M d, Y - g:i A" }}<br>
+                        <strong>Last Updated:</strong> {{ patent.updated_at|date:"M d, Y - g:i A" }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <a href="{% url 'patent_update' patent.id %}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a href="{% url 'patent_delete' patent.id %}" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                    <a href="{% url 'patent_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    
+    .card-header {
+        border-bottom: 2px solid #0056b3;
+    }
+    
+    .card-body p {
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-body p:last-child {
+        margin-bottom: 0;
+    }
+    
+    strong {
+        color: #333;
+    }
+</style>
+{% endblock %}

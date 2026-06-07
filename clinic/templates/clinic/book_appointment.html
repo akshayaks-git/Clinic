@@ -1,0 +1,67 @@
+{% extends 'clinic/base.html' %}
+
+{% block title %}Book Appointment - Dr. Annops Dental Clinic{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Book an Appointment</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label for="id_doctor" class="form-label">Select Doctor</label>
+                            {{ form.doctor }}
+                            {% if form.doctor.errors %}<div class="text-danger small mt-1">{{ form.doctor.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_appointment_date" class="form-label">Appointment Date</label>
+                            {{ form.appointment_date }}
+                            {% if form.appointment_date.errors %}<div class="text-danger small mt-1">{{ form.appointment_date.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_appointment_time" class="form-label">Appointment Time</label>
+                            {{ form.appointment_time }}
+                            {% if form.appointment_time.errors %}<div class="text-danger small mt-1">{{ form.appointment_time.errors }}</div>{% endif %}
+                            <small class="text-muted">Select from available slots</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_reason" class="form-label">Reason for Visit</label>
+                            {{ form.reason }}
+                            {% if form.reason.errors %}<div class="text-danger small mt-1">{{ form.reason.errors }}</div>{% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100">Submit Appointment Request</button>
+                    </form>
+
+                    <hr>
+                    <p class="text-muted text-center mb-0">
+                        <i class="bi bi-info-circle"></i> Your appointment request will be reviewed and confirmed by the doctor.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    select, input[type="date"], input[type="time"], textarea {
+        border-radius: 0.5rem;
+        border: 1px solid #ddd;
+        padding: 0.75rem;
+        width: 100%;
+    }
+</style>
+{% endblock %}

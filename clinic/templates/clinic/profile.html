@@ -1,0 +1,162 @@
+{% extends 'clinic/base.html' %}
+
+{% block title %}My Profile - Dr. Annops Dental Clinic{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        {% if profile_type == 'patient' %}
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">Patient Profile</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h6>Personal Information</h6>
+                                <p>
+                                    <strong>Name:</strong> {{ patient.user.first_name }} {{ patient.user.last_name }}<br>
+                                    <strong>Email:</strong> {{ patient.user.email }}<br>
+                                    <strong>Phone:</strong> {{ patient.phone }}<br>
+                                    <strong>Date of Birth:</strong> {{ patient.date_of_birth|date:"d M Y" }}<br>
+                                    <strong>Age:</strong> {{ patient.age }} years<br>
+                                    <strong>Gender:</strong> {{ patient.get_gender_display }}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Medical Information</h6>
+                                <p>
+                                    <strong>Blood Group:</strong> {{ patient.blood_group|default:"Not provided" }}<br>
+                                    <strong>Allergies:</strong> {{ patient.allergies|default:"None" }}<br>
+                                    <strong>Medical Conditions:</strong> {{ patient.medical_conditions|default:"None" }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h6>Address Information</h6>
+                                <p>
+                                    <strong>Address:</strong> {{ patient.address }}<br>
+                                    <strong>City:</strong> {{ patient.city }}<br>
+                                    <strong>Postal Code:</strong> {{ patient.postal_code }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h6>Emergency Contact</h6>
+                                <p>
+                                    <strong>Name:</strong> {{ patient.emergency_contact }}<br>
+                                    <strong>Phone:</strong> {{ patient.emergency_contact_phone }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Quick Stats</h6>
+                    </div>
+                    <div class="card-body text-center">
+                        <p>
+                            <i class="bi bi-calendar" style="font-size: 2rem; color: var(--primary-color);"></i><br>
+                            <strong>Appointments</strong><br>
+                            <span style="font-size: 1.5rem;">{{ patient.appointments.count }}</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <a href="#" class="btn btn-primary w-100 mb-2" onclick="alert('Edit functionality to be implemented')">Edit Profile</a>
+                        <a href="{% url 'logout' %}" class="btn btn-outline-danger w-100">Logout</a>
+                    </div>
+                </div>
+            </div>
+
+        {% elif profile_type == 'doctor' %}
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">Doctor Profile</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h6>Personal Information</h6>
+                                <p>
+                                    <strong>Name:</strong> Dr. {{ doctor.user.first_name }} {{ doctor.user.last_name }}<br>
+                                    <strong>Email:</strong> {{ doctor.user.email }}<br>
+                                    <strong>Phone:</strong> {{ doctor.phone }}<br>
+                                    <strong>Specialization:</strong> {{ doctor.get_specialization_display }}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Professional Details</h6>
+                                <p>
+                                    <strong>License Number:</strong> {{ doctor.license_number }}<br>
+                                    <strong>Experience:</strong> {{ doctor.experience_years }} years<br>
+                                    <strong>Consultation Fee:</strong> ${{ doctor.consultation_fee }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h6>Schedule Information</h6>
+                                <p>
+                                    <strong>Working Hours:</strong> {{ doctor.start_time|time:"H:i" }} - {{ doctor.end_time|time:"H:i" }}<br>
+                                    <strong>Working Days:</strong> {{ doctor.working_days }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h6>Biography</h6>
+                                <p>{{ doctor.bio|linebreaks|default:"No biography provided." }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Quick Stats</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-center mb-3">
+                            <i class="bi bi-calendar-check" style="font-size: 2rem; color: var(--primary-color);"></i><br>
+                            <strong>Total Appointments</strong><br>
+                            <span style="font-size: 1.5rem;">{{ doctor.appointments.count }}</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <a href="#" class="btn btn-primary w-100 mb-2" onclick="alert('Edit functionality to be implemented')">Edit Profile</a>
+                        <a href="{% url 'logout' %}" class="btn btn-outline-danger w-100">Logout</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,524 @@
+{% extends "clinic/base.html" %}
+
+{% block title %}Patent Invention Disclosure Form - Dental Clinic{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Header Section -->
+            <div class="alert alert-info mb-4">
+                <h4 class="alert-heading"><i class="fas fa-lightbulb"></i> Patent Invention Disclosure Form</h4>
+                <p class="mb-0">
+                    <strong>Note:</strong> Patents are granted for inventions such as new dental devices, innovative treatment methods, 
+                    dental materials, software/AI systems, equipment designs, and diagnostic tools. A dental clinic itself is not patented. 
+                    Use this form to disclose your dental innovation before filing with the patent office.
+                </p>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" novalidate class="patent-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        <strong>Errors:</strong>
+                        <ul>
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                <!-- Section 1: Applicant Information -->
+                <div class="card section-card mb-4">
+                    <div class="card-header section-header">
+                        <h5 class="mb-0"><span class="section-number">1</span> Applicant Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.applicant_name.id_for_label }}" class="form-label required">Applicant Name</label>
+                                {{ form.applicant_name }}
+                                {% if form.applicant_name.errors %}
+                                    <div class="text-danger small">{{ form.applicant_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.email_address.id_for_label }}" class="form-label required">Email Address</label>
+                                {{ form.email_address }}
+                                {% if form.email_address.errors %}
+                                    <div class="text-danger small">{{ form.email_address.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.clinic_name.id_for_label }}" class="form-label required">Dental Clinic Name</label>
+                                {{ form.clinic_name }}
+                                {% if form.clinic_name.errors %}
+                                    <div class="text-danger small">{{ form.clinic_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.phone_number.id_for_label }}" class="form-label required">Phone Number</label>
+                                {{ form.phone_number }}
+                                {% if form.phone_number.errors %}
+                                    <div class="text-danger small">{{ form.phone_number.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.clinic_address.id_for_label }}" class="form-label required">Address</label>
+                            {{ form.clinic_address }}
+                            {% if form.clinic_address.errors %}
+                                <div class="text-danger small">{{ form.clinic_address.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Inventor Details -->
+                <div class="card section-card mb-4">
+                    <div class="card-header section-header">
+                        <h5 class="mb-0"><span class="section-number">2</span> Inventor Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">
+                            <i class="fas fa-info-circle"></i> Enter inventor information. Use commas to separate multiple inventors.
+                        </p>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.inventor_names.id_for_label }}" class="form-label required">Inventor Names</label>
+                            <small class="d-block text-muted mb-2">Format: Name1, Name2, Name3</small>
+                            {{ form.inventor_names }}
+                            {% if form.inventor_names.errors %}
+                                <div class="text-danger small">{{ form.inventor_names.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.inventor_designations.id_for_label }}" class="form-label">Inventor Designations</label>
+                            <small class="d-block text-muted mb-2">Format: Designation1, Designation2, Designation3</small>
+                            {{ form.inventor_designations }}
+                            {% if form.inventor_designations.errors %}
+                                <div class="text-danger small">{{ form.inventor_designations.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.inventor_contact.id_for_label }}" class="form-label">Inventor Contact Numbers</label>
+                            <small class="d-block text-muted mb-2">Format: Contact1, Contact2, Contact3</small>
+                            {{ form.inventor_contact }}
+                            {% if form.inventor_contact.errors %}
+                                <div class="text-danger small">{{ form.inventor_contact.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Invention Title -->
+                <div class="card section-card mb-4">
+                    <div class="card-header section-header">
+                        <h5 class="mb-0"><span class="section-number">3</span> Invention Title</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="{{ form.title.id_for_label }}" class="form-label required">Title of the Invention</label>
+                            <small class="d-block text-muted mb-2">Provide a clear and concise title for your invention</small>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                                <div class="text-danger small">{{ form.title.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Type of Dental Innovation -->
+                <div class="card section-card mb-4">
+                    <div class="card-header section-header">
+                        <h5 class="mb-0"><span class="section-number">4</span> Type of Dental Innovation</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label required">Select the type of innovation:</label>
+                            <div class="innovation-types">
+                                {{ form.innovation_type }}
+                            </div>
+                            {% if form.innovation_type.errors %}
+                                <div class="text-danger small">{{ form.innovation_type.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 5: Problem Being Solved -->
+                <div class="card section-card mb-4">
+                    <div class="card-header section-header">
+                        <h5 class="mb-0"><span class="section-number">5</span> Problem Being Solved</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">
+                            Describe the problem or limitation in current dental practice that your invention addresses.
+                        </p>
+                        <div class="mb-3">
+                            <label for="{{ form.problem_statement.id_for_label }}" class="form-label required"></label>
+                            {{ form.problem_statement }}
+                            {% if form.problem_statement.errors %}
+                                <div class="text-danger small">{{ form.problem_statement.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 6: Detailed Description -->
+                <div class="card section-card mb-4">
+                    <div class="card-header section-header">
+                        <h5 class="mb-0"><span class="section-number">6</span> Detailed Description of Invention</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">
+                            Provide a complete and thorough explanation of the invention. Include how it works, its components, 
+                            and how it differs from existing solutions.
+                        </p>
+                        <div class="mb-3">
+                            <label for="{{ form.detailed_description.id_for_label }}" class="form-label required"></label>
+                            {{ form.detailed_description }}
+                            {% if form.detailed_description.errors %}
+                                <div class="text-danger small">{{ form.detailed_description.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 7: Novel Features -->
+                <div class="card section-card mb-4">
+                    <div class="card-header section-header">
+                        <h5 class="mb-0"><span class="section-number">7</span> Novel Features</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">
+                            What makes the invention new and unique? Highlight the innovative aspects that distinguish 
+                            it from existing solutions.
+                        </p>
+                        <div class="mb-3">
+                            <label for="{{ form.novel_features.id_for_label }}" class="form-label required"></label>
+                            {{ form.novel_features }}
+                            {% if form.novel_features.errors %}
+                                <div class="text-danger small">{{ form.novel_features.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 8: Advantages -->
+                <div class="card section-card mb-4">
+                    <div class="card-header section-header">
+                        <h5 class="mb-0"><span class="section-number">8</span> Advantages</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">
+                            List the benefits and advantages of your invention compared to existing solutions.
+                        </p>
+                        <div class="mb-3">
+                            <label for="{{ form.advantages.id_for_label }}" class="form-label required"></label>
+                            {{ form.advantages }}
+                            {% if form.advantages.errors %}
+                                <div class="text-danger small">{{ form.advantages.errors }}</div>
+                            {% endif %}
+                            <small class="d-block text-muted mt-2">
+                                Format: List benefits (1. Benefit1 2. Benefit2 3. Benefit3 4. Benefit4)
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 9: Technical Drawings / Diagrams -->
+                <div class="card section-card mb-4">
+                    <div class="card-header section-header">
+                        <h5 class="mb-0"><span class="section-number">9</span> Technical Drawings / Diagrams</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">
+                            Attach drawings, sketches, photographs, CAD designs, or flowcharts of your invention.
+                        </p>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.technical_drawings.id_for_label }}" class="form-label">Technical Drawings</label>
+                            <div class="file-input-wrapper">
+                                {{ form.technical_drawings }}
+                            </div>
+                            <small class="text-muted d-block mt-2">
+                                Supported formats: PDF, JPG, PNG, GIF (Max 10MB)
+                            </small>
+                            {% if form.technical_drawings.errors %}
+                                <div class="text-danger small">{{ form.technical_drawings.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.technical_specifications.id_for_label }}" class="form-label">Technical Specifications Document</label>
+                            <div class="file-input-wrapper">
+                                {{ form.technical_specifications }}
+                            </div>
+                            <small class="text-muted d-block mt-2">
+                                Supported formats: PDF, DOCX (Max 10MB)
+                            </small>
+                            {% if form.technical_specifications.errors %}
+                                <div class="text-danger small">{{ form.technical_specifications.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 10: Prior Art Search -->
+                <div class="card section-card mb-4">
+                    <div class="card-header section-header">
+                        <h5 class="mb-0"><span class="section-number">10</span> Prior Art Search</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">
+                            Have you searched for similar patents or existing technologies?
+                        </p>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                {{ form.prior_art_search_done }}
+                                <label class="form-check-label" for="{{ form.prior_art_search_done.id_for_label }}">
+                                    Yes, I have conducted a prior art search
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.prior_art_details.id_for_label }}" class="form-label">Search Details (if yes)</label>
+                            <small class="d-block text-muted mb-2">
+                                Provide details of any similar patents or technologies you found:
+                            </small>
+                            {{ form.prior_art_details }}
+                            {% if form.prior_art_details.errors %}
+                                <div class="text-danger small">{{ form.prior_art_details.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 11: Public Disclosure Status -->
+                <div class="card section-card mb-4">
+                    <div class="card-header section-header">
+                        <h5 class="mb-0"><span class="section-number">11</span> Public Disclosure Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">
+                            Has the invention been publicly disclosed, presented, or published anywhere?
+                        </p>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                {{ form.public_disclosure }}
+                                <label class="form-check-label" for="{{ form.public_disclosure.id_for_label }}">
+                                    Yes, the invention has been publicly disclosed
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.public_disclosure_details.id_for_label }}" class="form-label">Disclosure Details (if yes)</label>
+                            <small class="d-block text-muted mb-2">
+                                Date: _______________<br>
+                                Location: _______________<br>
+                                Event/Publication: _______________
+                            </small>
+                            {{ form.public_disclosure_details }}
+                            {% if form.public_disclosure_details.errors %}
+                                <div class="text-danger small">{{ form.public_disclosure_details.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 12: Commercial Potential -->
+                <div class="card section-card mb-4">
+                    <div class="card-header section-header">
+                        <h5 class="mb-0"><span class="section-number">12</span> Commercial Potential</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="{{ form.expected_applications.id_for_label }}" class="form-label required">Expected Applications</label>
+                            <small class="d-block text-muted mb-2">
+                                How can this invention be used? What are the expected applications?
+                            </small>
+                            {{ form.expected_applications }}
+                            {% if form.expected_applications.errors %}
+                                <div class="text-danger small">{{ form.expected_applications.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.target_market.id_for_label }}" class="form-label required">Target Market</label>
+                            <small class="d-block text-muted mb-2">
+                                Who would use this invention? (e.g., dental clinics, hospitals, individual practitioners)
+                            </small>
+                            {{ form.target_market }}
+                            {% if form.target_market.errors %}
+                                <div class="text-danger small">{{ form.target_market.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.estimated_commercial_value.id_for_label }}" class="form-label">Estimated Commercial Value</label>
+                            <small class="d-block text-muted mb-2">
+                                What is the estimated commercial value of this invention?
+                            </small>
+                            {{ form.estimated_commercial_value }}
+                            {% if form.estimated_commercial_value.errors %}
+                                <div class="text-danger small">{{ form.estimated_commercial_value.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 13: Ownership Declaration -->
+                <div class="card section-card mb-4">
+                    <div class="card-header section-header bg-warning">
+                        <h5 class="mb-0"><span class="section-number">13</span> Ownership Declaration</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning">
+                            <strong>Declaration:</strong> I/We declare that the information provided in this form is accurate and 
+                            that the invention is original to the best of my/our knowledge. I/We declare that I/we are the true 
+                            and first inventors of this invention.
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <p><strong>Applicant Signature:</strong></p>
+                                <div style="border-bottom: 2px solid #333; height: 60px; margin-bottom: 10px;"></div>
+                                <p class="small text-muted">Signature of Applicant</p>
+                                <p><strong>Date:</strong> ___ / ___ / ______</p>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <p><strong>Inventor Signature(s):</strong></p>
+                                <div style="border-bottom: 2px solid #333; height: 60px; margin-bottom: 10px;"></div>
+                                <p class="small text-muted">Signature of Inventor(s)</p>
+                                <p><strong>Date:</strong> ___ / ___ / ______</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 14: Internal Review Section (Admin Only) -->
+                <div class="card section-card mb-4 border-danger">
+                    <div class="card-header section-header bg-danger text-white">
+                        <h5 class="mb-0"><span class="section-number">14</span> Internal Review Section (Admin Only)</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">
+                            This section is for internal review by clinic administrators and patent reviewers only.
+                        </p>
+                        
+                        <div class="alert alert-info">
+                            <strong>Patentability Assessment Criteria:</strong>
+                            <ul class="mb-0">
+                                <li><strong>Novel:</strong> The invention is new and not previously disclosed</li>
+                                <li><strong>Inventive Step:</strong> It involves an inventive step not obvious to experts</li>
+                                <li><strong>Industrial Applicable:</strong> It can be applied in industrial or commercial settings</li>
+                                <li><strong>Requires Further Review:</strong> Additional information or expert opinion needed</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-save"></i> Submit Patent Invention Disclosure
+                        </button>
+                        <a href="{% url 'patent_list' %}" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .section-card {
+        border: none;
+        border-left: 4px solid #007bff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-header {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+        border-bottom: none;
+    }
+
+    .section-header h5 {
+        color: white;
+        display: flex;
+        align-items: center;
+    }
+
+    .section-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        margin-right: 10px;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .form-label.required::after {
+        content: " *";
+        color: red;
+    }
+
+    .form-control, .form-select, textarea {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+    }
+
+    .form-control:focus, .form-select:focus, textarea:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    textarea {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .file-input-wrapper {
+        border: 2px dashed #007bff;
+        padding: 15px;
+        border-radius: 4px;
+        background-color: #f8f9fa;
+    }
+
+    .patent-form {
+        background-color: #fff;
+    }
+
+    .innovation-types .form-select {
+        font-size: 1rem;
+    }
+
+    .alert-info {
+        background-color: #e7f3ff;
+        border: 1px solid #b3d9ff;
+    }
+</style>
+{% endblock %}

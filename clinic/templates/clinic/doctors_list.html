@@ -1,0 +1,97 @@
+{% extends 'clinic/base.html' %}
+
+{% block title %}Our Specialist Clinicians - Dr. Anoop's Dental Clinic{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-md-12 text-center text-md-start">
+            <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-semibold mb-2">Our Clinicians</span>
+            <h2 class="display-6 fw-extrabold mb-2" style="letter-spacing: -0.03em;">Meet Our Expert Specialists</h2>
+            <p class="text-muted">Filtered lists of the 8 official specialists at Anupam Dental Clinic.</p>
+        </div>
+    </div>
+
+    <!-- Filter Form -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="glass-panel p-3 bg-white">
+                <form method="get" class="row g-3 align-items-center">
+                    <div class="col-md-9">
+                        <select name="specialization" class="form-select rounded-pill">
+                            <option value="">All Specializations & Services</option>
+                            {% for value, label in specializations %}
+                                <option value="{{ value }}" {% if request.GET.specialization == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill border-0 gradient-bg text-white fw-bold py-2">
+                            <i class="bi bi-filter me-1"></i> Filter Clinicians
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctors Grid -->
+    <div class="row g-4">
+        {% for doctor in doctors %}
+            <div class="col-lg-4 col-md-6">
+                <div class="glass-panel bg-white p-4 h-100 d-flex flex-column text-center">
+                    {% if doctor.profile_image %}
+                        <img src="{{ doctor.profile_image.url }}" alt="Dr. {{ doctor.user.first_name }}" class="doctor-image mb-3 mx-auto">
+                    {% else %}
+                        <div class="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 100px; height: 100px;">
+                            <i class="bi bi-person-fill fs-1"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <h5 class="fw-bold mb-1 text-dark">Dr. {{ doctor.user.first_name }} {{ doctor.user.last_name }}</h5>
+                    <small class="text-info fw-semibold d-block mb-3">{{ doctor.get_specialization_display }}</small>
+                    
+                    <div class="p-3 bg-light rounded-4 border mb-4 text-start small">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">Credentials:</span>
+                            <strong class="text-dark">{% if doctor.specialization == 'general' %}BDS{% else %}MDS{% endif %}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">License Number:</span>
+                            <span class="fw-bold text-secondary">{{ doctor.license_number }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">Experience:</span>
+                            <strong class="text-dark">{{ doctor.experience_years }} Years</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">Timings:</span>
+                            <span class="text-dark">{{ doctor.start_time|time:"H:i" }} - {{ doctor.end_time|time:"H:i" }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Consultation Fee:</span>
+                            <strong class="text-success">₹{{ doctor.consultation_fee|floatformat:0 }}</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-auto d-grid gap-2">
+                        <a href="{% url 'doctor_profile' doctor.id %}" class="btn btn-outline-dark rounded-pill btn-sm">Read Full Profile</a>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'book_appointment' %}?doctor={{ doctor.id }}" class="btn btn-primary rounded-pill btn-sm border-0 gradient-bg text-white fw-bold">Book Visit Now</a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-primary rounded-pill btn-sm border-0 gradient-bg text-white fw-bold">Sign In to Book</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-md-12">
+                <div class="glass-panel p-5 text-center bg-white">
+                    <i class="bi bi-person-x-fill text-muted fs-1 mb-2 d-block"></i>
+                    <span class="text-muted">No specialist doctors match your filter selection.</span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

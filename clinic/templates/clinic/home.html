@@ -1,0 +1,515 @@
+{% extends 'clinic/base.html' %}
+{% load static %}
+
+{% block title %}Dr. Anoop's Anupam Dental Clinic - Premium Oral Care Since 1996{% endblock %}
+
+{% block content %}
+<!-- Public Landing Section -->
+<div class="gradient-bg text-white py-5 position-relative" style="border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; overflow: hidden;">
+    <!-- Abstract grid background pattern -->
+    <div style="position: absolute; top:0; left:0; width:100%; height:100%; opacity: 0.08; background-image: radial-gradient(#fff 1.5px, transparent 1.5px); background-size: 24px 24px;"></div>
+    
+    <div class="container py-5 position-relative">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <span class="badge bg-light text-primary px-3 py-2 rounded-pill fw-semibold mb-3 shadow-sm">
+                    <i class="bi bi-patch-check-fill text-info me-1"></i> Trust & Care Since 1996
+                </span>
+                <h1 class="display-3 fw-extrabold mb-4" style="line-height: 1.1; letter-spacing: -0.04em;">
+                    Painless Treatments, <br><span style="color: #67e8f9;">Perfect Smiles.</span>
+                </h1>
+                <p class="lead text-white-50 mb-4 fs-5" style="max-width: 600px;">
+                    Experience modern dentistry combined with almost 30 years of trust. Dr. Anoop's Anupam Dental Clinic offers specialized, ethical treatment from root canals to dental implants.
+                </p>
+                
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{% url 'patient_register' %}" class="btn btn-light btn-lg px-4 py-3 rounded-pill fw-bold text-primary shadow-lg">
+                        Book Appointment <i class="bi bi-chevron-right ms-1"></i>
+                    </a>
+                    <a href="#ai-sandbox" class="btn btn-outline-light btn-lg px-4 py-3 rounded-pill">
+                        Try AI Simulations
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-lg-5">
+                <div class="glass-panel p-4 text-dark shadow-2xl rounded-4" style="background: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.8);">
+                    <h5 class="fw-bold mb-3 d-flex align-items-center gap-2 text-primary">
+                        <i class="bi bi-calendar-check-fill"></i> Fast Appointment Request
+                    </h5>
+                    <p class="text-muted small">Select your preferred doctor. Our coordinator will contact you immediately.</p>
+                    <form action="{% url 'patient_register' %}" method="get">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary">Specialist Doctor</label>
+                            <select class="form-select rounded-3">
+                                <option value="">Dr. Anoopkumar R (Chief Surgeon)</option>
+                                <option value="">Dr. Terry Thomas (Orthodontist)</option>
+                                <option value="">Dr. KrishnaKumar (Pedodontist)</option>
+                                <option value="">Dr. Renjith Raj (Endodontist)</option>
+                                <option value="">Dr. Justin Mathew (Oral Surgeon)</option>
+                                <option value="">Dr. Joseph J Pulikkottil (Periodontist)</option>
+                                <option value="">Dr. Sijo P Mathew (Endodontist)</option>
+                                <option value="">Dr. Shibu Sreedhar (Smile Designer)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary">Desired Date</label>
+                            <input type="date" class="form-control rounded-3" min="2026-06-07">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2.5 rounded-3 border-0 gradient-bg text-white fw-bold">
+                            Request Booking Info
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Core Clinic Stats -->
+<div class="container" style="margin-top: -30px;">
+    <div class="row g-4 justify-content-center">
+        <div class="col-lg-3 col-md-6">
+            <div class="glass-panel p-4 text-center bg-white shadow-md">
+                <div class="d-flex justify-content-center align-items-center bg-info-subtle text-info rounded-circle mx-auto mb-3" style="width: 56px; height: 56px;">
+                    <i class="bi bi-people-fill fs-4"></i>
+                </div>
+                <h3 class="fw-extrabold mb-1">8</h3>
+                <p class="text-muted small mb-0 fw-medium">Specialist Doctors Under One Roof</p>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="glass-panel p-4 text-center bg-white shadow-md">
+                <div class="d-flex justify-content-center align-items-center bg-primary-subtle text-primary rounded-circle mx-auto mb-3" style="width: 56px; height: 56px;">
+                    <i class="bi bi-award-fill fs-4"></i>
+                </div>
+                <h3 class="fw-extrabold mb-1">30+ Yrs</h3>
+                <p class="text-muted small mb-0 fw-medium">Clinical Experience Since 1996</p>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="glass-panel p-4 text-center bg-white shadow-md">
+                <div class="d-flex justify-content-center align-items-center bg-success-subtle text-success rounded-circle mx-auto mb-3" style="width: 56px; height: 56px;">
+                    <i class="bi bi-shield-check fs-4"></i>
+                </div>
+                <h3 class="fw-extrabold mb-1">100%</h3>
+                <p class="text-muted small mb-0 fw-medium">Sterilization & Hygiene Standards</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Philosophy and Safety Section -->
+<div class="container py-5 mt-5">
+    <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+            <h5 class="text-primary fw-bold mb-2">Our Philosophy</h5>
+            <h2 class="display-6 fw-extrabold mb-4" style="letter-spacing: -0.03em;">Generations of Families Trust Our Honest Advice & Care</h2>
+            <p class="text-muted mb-3">
+                At Anupam Dental Clinic, we believe that trust is the foundation of good dental care. Every treatment begins only after a detailed, transparent explanation of the diagnosis and treatment alternatives, helping you and your family make informed and confident decisions.
+            </p>
+            <div class="d-flex gap-3 mb-4">
+                <div class="p-3 bg-light rounded-3 border-start border-4 border-info">
+                    <h6 class="fw-bold mb-1">Safety & Sterilization First</h6>
+                    <p class="text-muted small mb-0">Strict autoclave protocols and disposable instruments guarantee infection-free, safe visits.</p>
+                </div>
+                <div class="p-3 bg-light rounded-3 border-start border-4 border-primary">
+                    <h6 class="fw-bold mb-1">Pediatric Specialists</h6>
+                    <p class="text-muted small mb-0">Friendly, relaxed environments to ensure children enjoy their dental appointments.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 text-center">
+            <div class="position-relative d-inline-block">
+                <div style="position: absolute; top: -15px; left: -15px; width: 80px; height: 80px; background: hsl(var(--secondary-hsl)); border-radius: 50%; opacity: 0.15; z-index: -1;"></div>
+                <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=800&auto=format&fit=crop" class="img-fluid rounded-4 shadow-xl" style="max-height: 400px; object-fit: cover;" alt="Dr. Anoop's Dental Clinic interior">
+                <div style="position: absolute; bottom: 15px; right: -15px; background: white; padding: 12px 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: left;">
+                    <h6 class="mb-0 fw-bold">Est. 1996</h6>
+                    <span class="text-muted small">Malappuram, Kerala</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Interactive AI Sandbox Section -->
+<div class="bg-light py-5 mt-5" id="ai-sandbox">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-semibold mb-2">Simulate Diagnostics</span>
+            <h2 class="display-6 fw-extrabold mb-3" style="letter-spacing: -0.03em;">Try Our AI Clinical Simulation Sandbox</h2>
+            <p class="text-muted" style="max-width: 650px; margin: 0 auto;">Experience firsthand how our advanced dental software helps diagnose anomalies and design perfect smiles.</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- X-Ray Diagnostic Analyzer -->
+            <div class="col-lg-6">
+                <div class="glass-panel p-4 bg-white h-100">
+                    <h5 class="fw-bold mb-3 text-dark d-flex align-items-center justify-content-between">
+                        <span><i class="bi bi-activity text-danger"></i> AI X-Ray Scanning Analyzer</span>
+                        <span class="badge bg-danger small pulse-badge">Interactive Demo</span>
+                    </h5>
+                    <p class="text-muted small mb-4">Click <strong>"Start AI Scan"</strong> to simulate automatic caries and bone loss identification using a neural network overlay.</p>
+                    
+                    <div class="xray-container mb-3" style="max-height: 280px;">
+                        <img src="https://images.unsplash.com/photo-1598256989800-fe5f95da9787?q=80&w=800&auto=format&fit=crop" class="xray-image" id="xrayImage" alt="Dental X-Ray image">
+                        <div class="scan-line" id="scanLine"></div>
+                        <!-- Bounding boxes -->
+                        <div class="diagnostic-box caries active" style="top: 35%; left: 28%; width: 40px; height: 35px;" data-label="Caries (Decay) Detected (94% confidence)" id="box1"></div>
+                        <div class="diagnostic-box bone-loss active" style="top: 55%; left: 50%; width: 60px; height: 30px;" data-label="Periodontal Bone Loss (87% confidence)" id="box2"></div>
+                        <div class="diagnostic-box implant-site active" style="top: 25%; left: 70%; width: 45px; height: 50px;" data-label="Recommended Implant Site (98% confidence)" id="box3"></div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button class="btn btn-dark btn-sm rounded-pill px-4 py-2" id="scanBtn" onclick="runXrayScan()">
+                            <i class="bi bi-play-circle me-1"></i> Start AI Scan
+                        </button>
+                        <span id="scanStatus" class="text-secondary small fw-medium">Diagnostics idle. Click scan.</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Smile Designer Sandbox -->
+            <div class="col-lg-6">
+                <div class="glass-panel p-4 bg-white h-100">
+                    <h5 class="fw-bold mb-3 text-dark d-flex align-items-center justify-content-between">
+                        <span><i class="bi bi-stars text-warning"></i> AI Cosmetic Smile Makeover</span>
+                        <span class="badge bg-warning text-dark small">Whitening / Veneers</span>
+                    </h5>
+                    <p class="text-muted small mb-4">Drag the slider horizontally to simulate a custom laser teeth whitening or veneer alignment.</p>
+                    
+                    <div class="smile-comparison mb-3">
+                        <div class="smile-image smile-before"></div>
+                        <div class="smile-image smile-after" id="smileAfter"></div>
+                        <input type="range" class="smile-slider" id="smileRange" min="0" max="100" value="50" oninput="slideSmile(this.value)">
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="small text-muted"><i class="bi bi-arrow-left-right"></i> Drag slider to compare</span>
+                        <span class="badge bg-dark rounded-pill py-1.5 px-3">Before vs After Makeover</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Services Section -->
+<div class="container py-5 my-5">
+    <div class="text-center mb-5">
+        <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-semibold mb-2">Our Clinical Focus</span>
+        <h2 class="display-6 fw-extrabold mb-3" style="letter-spacing: -0.03em;">Comprehensive Dental Solutions</h2>
+        <p class="text-muted" style="max-width: 650px; margin: 0 auto;">Expert treatments using state-of-the-art instruments in a gentle, caring environment.</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-lg-4 col-md-6">
+            <div class="glass-panel p-4 bg-white h-100">
+                <div class="text-primary mb-3"><i class="bi bi-shield-check fs-2"></i></div>
+                <h5 class="fw-bold">General Dentistry</h5>
+                <p class="text-muted small mb-0">Routine checkups, cleanings, scaling, composite fillings, and pediatric guidance directed toward maintaining permanent dental health.</p>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="glass-panel p-4 bg-white h-100">
+                <div class="text-info mb-3"><i class="bi bi-activity fs-2"></i></div>
+                <h5 class="fw-bold">Root Canal Treatment (RCT)</h5>
+                <p class="text-muted small mb-0">Microscope-assisted endodontics managed by specialized clinicians to relieve severe tooth pain and preserve damaged teeth painlessly.</p>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="glass-panel p-4 bg-white h-100">
+                <div class="text-success mb-3"><i class="bi bi-bezier2 fs-2"></i></div>
+                <h5 class="fw-bold">Orthodontics & Aligners</h5>
+                <p class="text-muted small mb-0">Invisible clear aligners, self-ligating braces, and growth guidance for teeth alignments in children and adults.</p>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="glass-panel p-4 bg-white h-100">
+                <div class="text-warning mb-3"><i class="bi bi-heart-pulse-fill fs-2"></i></div>
+                <h5 class="fw-bold">Implants & Periodontics</h5>
+                <p class="text-muted small mb-0">Guided implant surgeries and laser gum therapies to reconstruct chewing functionality and treat advanced pyorrhea.</p>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="glass-panel p-4 bg-white h-100">
+                <div class="text-danger mb-3"><i class="bi bi-scissors fs-2"></i></div>
+                <h5 class="fw-bold">Oral & Maxillofacial Surgery</h5>
+                <p class="text-muted small mb-0">Painless surgical removal of impacted wisdom teeth, bone grafts, and tissue biopsies incorporating clinical lasers.</p>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="glass-panel p-4 bg-white h-100">
+                <div class="text-dark mb-3"><i class="bi bi-emoji-smile-fill fs-2 text-warning"></i></div>
+                <h5 class="fw-bold">Smile Designing</h5>
+                <p class="text-muted small mb-0">Computerized aesthetic analysis combining porcelain veneers, laminates, and whitening to curate beautiful, natural smiles.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Find Us / Location Section -->
+<div class="container py-5 my-2" id="location">
+    <div class="text-center mb-5">
+        <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill fw-semibold mb-2"><i class="bi bi-geo-alt-fill me-1"></i>Find Us</span>
+        <h2 class="display-6 fw-extrabold mb-3" style="letter-spacing: -0.03em;">Visit Dr. Anoop's Anupam Dental Clinic</h2>
+        <p class="text-muted" style="max-width: 650px; margin: 0 auto;">Conveniently located in Nannambra, Theyyala, Malappuram. We are easy to reach and always ready to welcome you.</p>
+    </div>
+    <div class="row g-4 align-items-stretch">
+        <!-- Map Embed -->
+        <div class="col-lg-8">
+            <div class="glass-panel bg-white overflow-hidden" style="border-radius: 16px; height: 380px; padding: 0;">
+                <iframe
+                    src="https://maps.google.com/maps?q=Nannambra,+Theyyala,+Malappuram,+Kerala+676320&output=embed&z=15"
+                    width="100%"
+                    height="100%"
+                    style="border: none; display: block;"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Dr. Anoop's Dental Clinic on Google Maps">
+                </iframe>
+            </div>
+        </div>
+        <!-- Location Info -->
+        <div class="col-lg-4">
+            <div class="glass-panel p-4 bg-white h-100 d-flex flex-column" style="border-radius: 16px;">
+                <h5 class="fw-bold mb-4 text-dark"><i class="bi bi-hospital-fill text-danger me-2"></i>Clinic Details</h5>
+                <div class="d-flex gap-3 mb-4 align-items-start">
+                    <div class="d-flex align-items-center justify-content-center bg-danger-subtle text-danger rounded-circle flex-shrink-0" style="width: 44px; height: 44px;">
+                        <i class="bi bi-geo-alt-fill fs-5"></i>
+                    </div>
+                    <div>
+                        <p class="fw-semibold mb-0 small text-dark">Address</p>
+                        <p class="text-muted small mb-0">Nannambra, Theyyala<br>Malappuram, Kerala - 676320</p>
+                    </div>
+                </div>
+                <div class="d-flex gap-3 mb-4 align-items-start">
+                    <div class="d-flex align-items-center justify-content-center bg-success-subtle text-success rounded-circle flex-shrink-0" style="width: 44px; height: 44px;">
+                        <i class="bi bi-telephone-fill fs-5"></i>
+                    </div>
+                    <div>
+                        <p class="fw-semibold mb-0 small text-dark">Phone</p>
+                        <a href="tel:+919446046868" class="text-muted small text-decoration-none">+91 9446046868</a>
+                    </div>
+                </div>
+                <div class="d-flex gap-3 mb-4 align-items-start">
+                    <div class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-circle flex-shrink-0" style="width: 44px; height: 44px;">
+                        <i class="bi bi-clock-fill fs-5"></i>
+                    </div>
+                    <div>
+                        <p class="fw-semibold mb-0 small text-dark">Timings</p>
+                        <p class="text-muted small mb-0">Mon – Sat: 9:00 AM – 7:00 PM<br>Sunday: Closed</p>
+                    </div>
+                </div>
+                <div class="mt-auto">
+                    <a href="https://share.google/ivyVbbao9TSrVqW8R" target="_blank" class="btn btn-danger w-100 rounded-3 py-2 fw-semibold border-0">
+                        <i class="bi bi-map-fill me-2"></i>Open Full Map in Google
+                    </a>
+                    <a href="tel:+919446046868" class="btn btn-outline-success w-100 rounded-3 py-2 fw-semibold mt-2">
+                        <i class="bi bi-telephone-fill me-2"></i>Call Us Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Specialist Team Section -->
+<div class="bg-light py-5" id="team">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="badge bg-info-subtle text-info px-3 py-2 rounded-pill fw-semibold mb-2">Our Clinicians</span>
+            <h2 class="display-6 fw-extrabold mb-3" style="letter-spacing: -0.03em;">Meet Our Expert Team of Specialists</h2>
+            <p class="text-muted" style="max-width: 650px; margin: 0 auto;">Dedicated practitioners combining clinical excellence with clear communication.</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Doctor Card 1 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-panel p-3 bg-white text-center h-100" onclick="showDocModal('Dr. Anoopkumar R', 'Founder & Chief Dental Surgeon', 'BDS', 'Reg No: 1732', 'Dr. Anoopkumar R has been practicing since 1996. He has treated thousands of families with ethical general dentistry and transparent diagnosis.')" style="cursor: pointer;">
+                    <div class="avatar-box bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-person-fill fs-1"></i>
+                    </div>
+                    <h6 class="fw-bold mb-1">Dr. Anoopkumar R</h6>
+                    <small class="text-info d-block mb-1">BDS - Chief Surgeon</small>
+                    <span class="badge bg-secondary-subtle text-secondary small" style="font-size: 0.7rem;">Reg No: 1732</span>
+                </div>
+            </div>
+            
+            <!-- Doctor Card 2 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-panel p-3 bg-white text-center h-100" onclick="showDocModal('Dr. Terry Thomas Edathotty', 'Senior Consultant Orthodontist', 'MDS (Orthodontics)', 'Reg No: 4807', 'Dr. Terry Thomas is an expert in digital clear aligners and complex teeth alignment brackets for children and adults.')" style="cursor: pointer;">
+                    <div class="avatar-box bg-info-subtle text-info rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-person-fill fs-1"></i>
+                    </div>
+                    <h6 class="fw-bold mb-1">Dr. Terry Thomas</h6>
+                    <small class="text-info d-block mb-1">MDS - Orthodontist</small>
+                    <span class="badge bg-secondary-subtle text-secondary small" style="font-size: 0.7rem;">Reg No: 4807</span>
+                </div>
+            </div>
+
+            <!-- Doctor Card 3 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-panel p-3 bg-white text-center h-100" onclick="showDocModal('Dr. KrishnaKumar R', 'Consultant Pediatric Dentist', 'MDS (Pedodontics)', 'Reg No: 7729', 'Dr. Krishnakumar offers specialized pediatric care including early interceptive jaw guidance and myofunctional growth trainers.')" style="cursor: pointer;">
+                    <div class="avatar-box bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-person-fill fs-1"></i>
+                    </div>
+                    <h6 class="fw-bold mb-1">Dr. KrishnaKumar</h6>
+                    <small class="text-info d-block mb-1">MDS - Pediatric Dentist</small>
+                    <span class="badge bg-secondary-subtle text-secondary small" style="font-size: 0.7rem;">Reg No: 7729</span>
+                </div>
+            </div>
+
+            <!-- Doctor Card 4 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-panel p-3 bg-white text-center h-100" onclick="showDocModal('Dr. Renjith Raj', 'Consultant Endodontist', 'MDS (Endodontics)', 'Reg No: 8171', 'Dr. Renjith specializes in operating microscope-assisted single visit root canals and tooth saving retreatments.')" style="cursor: pointer;">
+                    <div class="avatar-box bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-person-fill fs-1"></i>
+                    </div>
+                    <h6 class="fw-bold mb-1">Dr. Renjith Raj</h6>
+                    <small class="text-info d-block mb-1">MDS - Endodontist</small>
+                    <span class="badge bg-secondary-subtle text-secondary small" style="font-size: 0.7rem;">Reg No: 8171</span>
+                </div>
+            </div>
+
+            <!-- Doctor Card 5 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-panel p-3 bg-white text-center h-100" onclick="showDocModal('Dr. Justin Mathew', 'Consultant Oral & Maxillofacial Surgeon', 'MDS (Oral Surgery)', 'Reg No: 5492', 'Dr. Justin specializes in wisdom teeth impactions, jaw fractures, pathology, and laser-assisted oral surgeries.')" style="cursor: pointer;">
+                    <div class="avatar-box bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-person-fill fs-1"></i>
+                    </div>
+                    <h6 class="fw-bold mb-1">Dr. Justin Mathew</h6>
+                    <small class="text-info d-block mb-1">MDS - Oral Surgeon</small>
+                    <span class="badge bg-secondary-subtle text-secondary small" style="font-size: 0.7rem;">Reg No: 5492</span>
+                </div>
+            </div>
+
+            <!-- Doctor Card 6 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-panel p-3 bg-white text-center h-100" onclick="showDocModal('Dr. Joseph J Pulikkottil', 'Consultant Periodontist & Implantologist', 'MDS (Periodontics)', 'Reg No: 2418', 'Dr. Joseph focuses on advanced bone grafting, dental implants placement, laser flap surgery, and gum aesthetics.')" style="cursor: pointer;">
+                    <div class="avatar-box bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-person-fill fs-1"></i>
+                    </div>
+                    <h6 class="fw-bold mb-1">Dr. Joseph J Pulikkottil</h6>
+                    <small class="text-info d-block mb-1">MDS - Implantologist</small>
+                    <span class="badge bg-secondary-subtle text-secondary small" style="font-size: 0.7rem;">Reg No: 2418</span>
+                </div>
+            </div>
+
+            <!-- Doctor Card 7 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-panel p-3 bg-white text-center h-100" onclick="showDocModal('Dr. Sijo P Mathew', 'Consultant Endodontist', 'MDS (Conservative Dentistry)', 'Reg No: 8982', 'Dr. Sijo is expert in micro-fillings, tooth-colored aesthetic enhancements, and complicated root canal re-entries.')" style="cursor: pointer;">
+                    <div class="avatar-box bg-info-subtle text-info rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-person-fill fs-1"></i>
+                    </div>
+                    <h6 class="fw-bold mb-1">Dr. Sijo P Mathew</h6>
+                    <small class="text-info d-block mb-1">MDS - Endodontist</small>
+                    <span class="badge bg-secondary-subtle text-secondary small" style="font-size: 0.7rem;">Reg No: 8982</span>
+                </div>
+            </div>
+
+            <!-- Doctor Card 8 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="glass-panel p-3 bg-white text-center h-100" onclick="showDocModal('Dr. Shibu Sreedhar', 'Consultant Endodontist & Smile Designer', 'MDS (Conservative Dentistry)', 'Reg No: 1561-A', 'Dr. Shibu integrates functional tooth restorations with cosmetic veneers, tooth whitening, and computerized smile corrections.')" style="cursor: pointer;">
+                    <div class="avatar-box bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-person-fill fs-1"></i>
+                    </div>
+                    <h6 class="fw-bold mb-1">Dr. Shibu Sreedhar</h6>
+                    <small class="text-info d-block mb-1">MDS - Smile Designer</small>
+                    <span class="badge bg-secondary-subtle text-secondary small" style="font-size: 0.7rem;">Reg No: 1561-A</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Clinician Profile Modal -->
+<div class="modal fade" id="docProfileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <div class="modal-header border-0 bg-light rounded-top-4">
+                <h5 class="modal-title fw-bold text-dark" id="docName"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <div class="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 90px; height: 90px;">
+                    <i class="bi bi-person-vcard fs-1"></i>
+                </div>
+                <p class="text-info fw-semibold mb-1" id="docSpecialty"></p>
+                <p class="text-muted small" id="docLicense"></p>
+                <hr class="my-3">
+                <p class="text-secondary" id="docBio" style="line-height: 1.5;"></p>
+            </div>
+            <div class="modal-footer border-0 p-3 bg-light rounded-bottom-4">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+                <a href="{% url 'patient_register' %}" class="btn btn-primary rounded-pill px-4 border-0 gradient-bg text-white">Book Appointment</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Smile Designer comparison logic
+    function slideSmile(val) {
+        document.getElementById('smileAfter').style.width = val + '%';
+    }
+
+    // AI X-Ray diagnostic analyzer simulation
+    function runXrayScan() {
+        const scanLine = document.getElementById('scanLine');
+        const scanStatus = document.getElementById('scanStatus');
+        const boxes = [document.getElementById('box1'), document.getElementById('box2'), document.getElementById('box3')];
+        const scanBtn = document.getElementById('scanBtn');
+        
+        scanBtn.disabled = true;
+        // Hide existing boxes
+        boxes.forEach(b => {
+            b.style.display = 'none';
+            b.classList.remove('active');
+        });
+        
+        // Show scanline & start animating
+        scanLine.style.display = 'block';
+        scanStatus.textContent = "AI analyzing dental structure...";
+        scanStatus.className = "text-info small fw-bold";
+        
+        setTimeout(() => {
+            // Show first anomaly
+            boxes[0].style.display = 'block';
+            boxes[0].classList.add('active');
+            scanStatus.textContent = "Processing molar roots...";
+        }, 1200);
+
+        setTimeout(() => {
+            // Show other anomalies
+            boxes[1].style.display = 'block';
+            boxes[1].classList.add('active');
+            boxes[2].style.display = 'block';
+            boxes[2].classList.add('active');
+        }, 2200);
+
+        setTimeout(() => {
+            // Finish scan
+            scanLine.style.display = 'none';
+            scanStatus.textContent = "Scan completed. Hover boxes for diagnosis.";
+            scanStatus.className = "text-success small fw-bold";
+            scanBtn.disabled = false;
+        }, 3200);
+    }
+
+    // Doctor details modal trigger
+    function showDocModal(name, specialty, qualification, license, bio) {
+        document.getElementById('docName').textContent = name;
+        document.getElementById('docSpecialty').textContent = specialty + " (" + qualification + ")";
+        document.getElementById('docLicense').textContent = license;
+        document.getElementById('docBio').textContent = bio;
+        
+        var modal = new bootstrap.Modal(document.getElementById('docProfileModal'));
+        modal.show();
+    }
+</script>
+{% endblock %}

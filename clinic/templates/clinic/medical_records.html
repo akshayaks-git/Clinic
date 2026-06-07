@@ -1,0 +1,97 @@
+{% extends 'clinic/base.html' %}
+
+{% block title %}Medical Records - Dr. Annops Dental Clinic{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>My Medical Records</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'add_medical_record' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Add Record
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            {% if records %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Type</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>File</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in records %}
+                                <tr>
+                                    <td>
+                                        <i class="bi bi-file-image"></i> {{ record.record_type }}
+                                    </td>
+                                    <td>{{ record.date_created|date:"d M Y" }}</td>
+                                    <td>{{ record.description|truncatewords:15 }}</td>
+                                    <td>
+                                        {% if record.file %}
+                                            <a href="{{ record.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-download"></i> Download
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted">N/A</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#recordModal{{ record.id }}">
+                                            <i class="bi bi-eye"></i> View
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Modals for records -->
+                {% for record in records %}
+                    <div class="modal fade" id="recordModal{{ record.id }}" tabindex="-1">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">{{ record.record_type }} - {{ record.date_created|date:"d M Y" }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><strong>Description:</strong></p>
+                                    <p>{{ record.description }}</p>
+                                    {% if record.notes %}
+                                        <p><strong>Notes:</strong></p>
+                                        <p>{{ record.notes }}</p>
+                                    {% endif %}
+                                    {% if record.file %}
+                                        <p>
+                                            <a href="{{ record.file.url }}" target="_blank" class="btn btn-primary">
+                                                <i class="bi bi-download"></i> Download File
+                                            </a>
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> No medical records yet. 
+                    <a href="{% url 'add_medical_record' %}">Add your first record</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

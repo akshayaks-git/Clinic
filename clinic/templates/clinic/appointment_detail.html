@@ -1,0 +1,149 @@
+{% extends 'clinic/base.html' %}
+
+{% block title %}Appointment Details - Dr. Annops Dental Clinic{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Appointment Details</h4>
+                        <span class="appointment-status status-{{ appointment.status }}">{{ appointment.get_status_display }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Doctor Information</h6>
+                            <p>
+                                <strong>Dr. {{ appointment.doctor.user.first_name }} {{ appointment.doctor.user.last_name }}</strong><br>
+                                {{ appointment.doctor.get_specialization_display }}<br>
+                                <i class="bi bi-telephone"></i> {{ appointment.doctor.phone }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Patient Information</h6>
+                            <p>
+                                <strong>{{ appointment.patient.user.first_name }} {{ appointment.patient.user.last_name }}</strong><br>
+                                <i class="bi bi-telephone"></i> {{ appointment.patient.phone }}<br>
+                                <i class="bi bi-person"></i> Age: {{ appointment.patient.age }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Appointment Date & Time</h6>
+                            <p>
+                                <i class="bi bi-calendar"></i> {{ appointment.appointment_date|date:"l, d F Y" }}<br>
+                                <i class="bi bi-clock"></i> {{ appointment.appointment_time|time:"H:i" }}<br>
+                                <small class="text-muted">Duration: {{ appointment.duration_minutes }} minutes</small>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Reason for Visit</h6>
+                            <p>{{ appointment.reason }}</p>
+                        </div>
+                    </div>
+
+                    {% if appointment.notes %}
+                        <hr>
+                        <div class="mb-4">
+                            <h6>Doctor's Notes</h6>
+                            <p>{{ appointment.notes }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if appointment.treatment %}
+                        <hr>
+                        <div class="mb-4">
+                            <h6>Treatment</h6>
+                            <p>
+                                <strong>{{ appointment.treatment.treatment_type }}</strong><br>
+                                Status: <span class="badge bg-primary">{{ appointment.treatment.get_status_display }}</span><br>
+                                <a href="{% url 'treatment_detail' appointment.treatment.id %}" class="btn btn-sm btn-outline-primary mt-2">
+                                    View Treatment Details
+                                </a>
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="{% url 'patient_appointments' %}" class="btn btn-outline-secondary w-100">Back to Appointments</a>
+                </div>
+                {% if appointment.status in 'pending,confirmed' %}
+                    <div class="col-md-6">
+                        <a href="{% url 'cancel_appointment' appointment.id %}" class="btn btn-outline-danger w-100">Cancel Appointment</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Appointment Status Timeline</h6>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker" style="background-color: var(--primary-color);"></div>
+                            <div class="timeline-content">
+                                <p class="mb-0"><strong>Requested</strong></p>
+                                <small class="text-muted">{{ appointment.created_at|date:"d M Y H:i" }}</small>
+                            </div>
+                        </div>
+                        
+                        {% if appointment.status != 'pending' %}
+                            <div class="timeline-item">
+                                <div class="timeline-marker" style="background-color: var(--primary-color);"></div>
+                                <div class="timeline-content">
+                                    <p class="mb-0"><strong>Confirmed</strong></p>
+                                    <small class="text-muted">{{ appointment.updated_at|date:"d M Y H:i" }}</small>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if appointment.status == 'completed' %}
+                            <div class="timeline-item">
+                                <div class="timeline-marker" style="background-color: var(--success-color);"></div>
+                                <div class="timeline-content">
+                                    <p class="mb-0"><strong>Completed</strong></p>
+                                </div>
+                            </div>
+                        {% elif appointment.status == 'cancelled' %}
+                            <div class="timeline-item">
+                                <div class="timeline-marker" style="background-color: var(--danger-color);"></div>
+                                <div class="timeline-content">
+                                    <p class="mb-0"><strong>Cancelled</strong></p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .timeline-marker {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-top: 5px;
+        margin-right: 15px;
+    }
+    .timeline-item {
+        display: flex;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}

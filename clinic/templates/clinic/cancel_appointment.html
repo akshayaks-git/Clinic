@@ -1,0 +1,45 @@
+{% extends 'clinic/base.html' %}
+
+{% block title %}Cancel Appointment - Dr. Annops Dental Clinic{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Cancel Appointment</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning mb-4">
+                        <i class="bi bi-exclamation-triangle"></i> Are you sure you want to cancel this appointment?
+                    </div>
+
+                    <div class="mb-4">
+                        <h6>Appointment Details</h6>
+                        <p>
+                            <strong>Doctor:</strong> Dr. {{ appointment.doctor.user.first_name }} {{ appointment.doctor.user.last_name }}<br>
+                            <strong>Date:</strong> {{ appointment.appointment_date|date:"d M Y" }}<br>
+                            <strong>Time:</strong> {{ appointment.appointment_time|time:"H:i" }}<br>
+                            <strong>Reason:</strong> {{ appointment.reason }}
+                        </p>
+                    </div>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-danger w-100">Yes, Cancel</button>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-outline-secondary w-100">No, Keep It</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

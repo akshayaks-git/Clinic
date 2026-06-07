@@ -1,0 +1,135 @@
+{% extends 'clinic/base.html' %}
+
+{% block title %}Doctor Registration - Dr. Annops Dental Clinic{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Doctor Registration</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                        {% endif %}
+
+                        <h5 class="mb-3">Account Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.username }}
+                                {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.email }}
+                                {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}<div class="text-danger small">{{ form.first_name.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}<div class="text-danger small">{{ form.last_name.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.password1 }}
+                                {% if form.password1.errors %}<div class="text-danger small">{{ form.password1.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.password2 }}
+                                {% if form.password2.errors %}<div class="text-danger small">{{ form.password2.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 mt-4">Professional Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.specialization }}
+                                {% if form.specialization.errors %}<div class="text-danger small">{{ form.specialization.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.license_number }}
+                                {% if form.license_number.errors %}<div class="text-danger small">{{ form.license_number.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.experience_years }}
+                                {% if form.experience_years.errors %}<div class="text-danger small">{{ form.experience_years.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.phone }}
+                                {% if form.phone.errors %}<div class="text-danger small">{{ form.phone.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.bio }}
+                            {% if form.bio.errors %}<div class="text-danger small">{{ form.bio.errors }}</div>{% endif %}
+                        </div>
+
+                        <h5 class="mb-3 mt-4">Schedule Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.start_time }}
+                                {% if form.start_time.errors %}<div class="text-danger small">{{ form.start_time.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.end_time }}
+                                {% if form.end_time.errors %}<div class="text-danger small">{{ form.end_time.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.working_days }}
+                            {% if form.working_days.errors %}<div class="text-danger small">{{ form.working_days.errors }}</div>{% endif %}
+                            <small class="text-muted">Comma-separated days (e.g., monday,tuesday,wednesday)</small>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.consultation_fee }}
+                            {% if form.consultation_fee.errors %}<div class="text-danger small">{{ form.consultation_fee.errors }}</div>{% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100">Register</button>
+                    </form>
+
+                    <hr>
+                    <p class="text-center mb-0">
+                        Already have an account? <a href="{% url 'login' %}">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="time"],
+    textarea,
+    select {
+        border-radius: 0.5rem;
+        border: 1px solid #ddd;
+        padding: 0.75rem;
+        width: 100%;
+    }
+</style>
+{% endblock %}

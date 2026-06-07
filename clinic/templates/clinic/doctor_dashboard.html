@@ -1,0 +1,489 @@
+{% extends 'clinic/base.html' %}
+{% load static %}
+
+{% block title %}Clinician ERP - Dr. Anoop's Dental Clinic{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar Navigation -->
+        <div class="col-lg-2 p-0 sidebar-nav d-none d-lg-block">
+            <a href="{% url 'doctor_dashboard' %}" class="sidebar-link active">
+                <i class="bi bi-heart-pulse"></i> Clinician ERP
+            </a>
+            <a href="{% url 'doctor_appointments' %}" class="sidebar-link">
+                <i class="bi bi-calendar-check"></i> Today's Schedule
+            </a>
+            <a href="{% url 'patent_list' %}" class="sidebar-link">
+                <i class="bi bi-lightbulb"></i> Patent Inventions
+            </a>
+            <a href="{% url 'profile' %}" class="sidebar-link">
+                <i class="bi bi-person-circle"></i> Profile Settings
+            </a>
+            <a href="{% url 'admin_dashboard' %}" class="sidebar-link text-primary">
+                <i class="bi bi-speedometer2"></i> Admin BI Portal
+            </a>
+        </div>
+
+        <!-- Main Dashboard Content -->
+        <div class="col-lg-10 col-md-12 p-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-extrabold mb-1">Welcome, Dr. {{ doctor.user.first_name }} {{ doctor.user.last_name }}</h2>
+                    <p class="text-muted small">Specialization: <strong class="text-primary">{{ doctor.get_specialization_display }}</strong> | License: <strong class="text-secondary">{{ doctor.license_number }}</strong></p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'doctor_desktop_console' %}" class="btn btn-warning text-dark rounded-pill px-4 py-2.5 shadow-md fw-semibold">
+                        <i class="bi bi-display me-1"></i> XE Dental Desktop Console
+                    </a>
+                    <a href="{% url 'patent_create' %}" class="btn btn-success rounded-pill border-0 text-white px-4 py-2.5 shadow-md">
+                        <i class="bi bi-lightbulb-fill me-1"></i> Register Patent Invention
+                    </a>
+                </div>
+            </div>
+
+            <!-- Statistics Grid -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="glass-panel p-3 bg-white text-center h-100">
+                        <h4 class="fw-extrabold mb-1 text-primary">{{ today_appointments|length }}</h4>
+                        <span class="text-muted small">Today's Schedule</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="glass-panel p-3 bg-white text-center h-100">
+                        <h4 class="fw-extrabold mb-1 text-success">{{ total_patents }}</h4>
+                        <span class="text-muted small">Registered Patents</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="glass-panel p-3 bg-white text-center h-100">
+                        <h4 class="fw-extrabold mb-1 text-info">{{ doctor.experience_years }} Yrs</h4>
+                        <span class="text-muted small">Clinical Experience</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="glass-panel p-3 bg-white text-center h-100">
+                        <h4 class="fw-extrabold mb-1 text-warning">₹{{ doctor.consultation_fee|floatformat:0 }}</h4>
+                        <span class="text-muted small">Consultation Fee</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EDR & Interactive Dentition Chart -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8">
+                    <div class="dentition-container">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-grid-3x3-gap-fill text-primary me-2"></i> Interactive Dentition Charting</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-secondary rounded-pill active" id="btnAdult" onclick="toggleDentition('adult')">Adult (32)</button>
+                                <button class="btn btn-sm btn-outline-secondary rounded-pill" id="btnPediatric" onclick="toggleDentition('pediatric')">Pediatric (20)</button>
+                                <select class="form-select form-select-sm rounded-pill" style="width: 120px;" id="toothSystem" onchange="toggleToothNumbering(this.value)">
+                                    <option value="fdi">FDI Notation</option>
+                                    <option value="universal">Universal Sys</option>
+                                    <option value="palmer">Palmer Notation</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p class="text-muted small mb-4">Select a tooth to edit or diagnose status. Mark existing restorations, implants, or active cavities.</p>
+                        
+                        <!-- Adult Dental Arch -->
+                        <div class="dental-arch-wrapper" id="adultArch">
+                            <!-- Upper Arch -->
+                            <div class="dental-arch">
+                                {% for i in adult_upper %}
+                                    <div class="tooth-item" data-tooth-fdi="{{ i }}" onclick="selectTooth(this)">
+                                        <i class="bi bi-shield-fill tooth-icon"></i>
+                                        <span class="tooth-number">{{ i }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <!-- Lower Arch -->
+                            <div class="dental-arch">
+                                {% for i in adult_lower %}
+                                    <div class="tooth-item" data-tooth-fdi="{{ i }}" onclick="selectTooth(this)">
+                                        <i class="bi bi-shield-fill tooth-icon"></i>
+                                        <span class="tooth-number">{{ i }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Pediatric Dental Arch (Hidden initially) -->
+                        <div class="dental-arch-wrapper" id="pediatricArch" style="display: none;">
+                            <!-- Upper Arch -->
+                            <div class="dental-arch">
+                                {% for i in pediatric_upper %}
+                                    <div class="tooth-item" data-tooth-fdi="{{ i }}" onclick="selectTooth(this)">
+                                        <i class="bi bi-shield-fill tooth-icon"></i>
+                                        <span class="tooth-number">{{ i }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <!-- Lower Arch -->
+                            <div class="dental-arch">
+                                {% for i in pediatric_lower %}
+                                    <div class="tooth-item" data-tooth-fdi="{{ i }}" onclick="selectTooth(this)">
+                                        <i class="bi bi-shield-fill tooth-icon"></i>
+                                        <span class="tooth-number">{{ i }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Tooth Status Editor Form -->
+                        <div class="mt-4 p-3 bg-light rounded-4 border" id="toothEditor" style="display: none;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="mb-0 fw-bold text-dark">Tooth #<span id="selectedToothNo"></span> Diagnostics</h6>
+                                <button class="btn-close btn-sm" onclick="closeToothEditor()"></button>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <label class="form-label small text-secondary">Status</label>
+                                    <select class="form-select form-select-sm rounded-3" id="toothStatusSelect" onchange="applyToothStatus(this.value)">
+                                        <option value="">Healthy</option>
+                                        <option value="caries">Active Caries (Decay)</option>
+                                        <option value="missing">Missing Tooth</option>
+                                        <option value="implant">Dental Implant</option>
+                                        <option value="filling">Composite Filling</option>
+                                        <option value="crown">Porcelain Crown</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="form-label small text-secondary">Clinical Remarks</label>
+                                    <input type="text" class="form-control form-control-sm rounded-3" id="toothRemarks" placeholder="e.g. mesial decay, root fracture...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Patient & Alerts -->
+                <div class="col-lg-4">
+                    <div class="glass-panel p-4 bg-white h-100 d-flex flex-column">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-file-earmark-person-fill text-success me-2"></i> Current Patient Profile</h5>
+                        
+                        <div class="text-center py-3">
+                            <div class="bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 70px; height: 70px;">
+                                <i class="bi bi-person-fill fs-2"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0">Jane Smith</h6>
+                            <small class="text-muted">ID: ANUPAM-P-0002 | Age: 32</small>
+                        </div>
+                        
+                        <div class="bg-warning-subtle text-dark border rounded-4 p-3 mb-3 small">
+                            <i class="bi bi-exclamation-triangle-fill text-warning me-1"></i>
+                            <strong>Allergy Alert:</strong> Penicillin allergy.
+                        </div>
+                        
+                        <!-- AI Prescription Allergy Safety Checker -->
+                        <div class="p-3 bg-light rounded-4 border flex-grow-1">
+                            <h6 class="fw-bold mb-2 small text-dark"><i class="bi bi-shield-fill-check text-info me-1"></i> AI Prescription Checker</h6>
+                            <p class="text-muted small" style="font-size: 0.75rem;">Verify safety and interactions against patient's allergies.</p>
+                            
+                            <div class="mb-2">
+                                <label class="form-label small text-secondary" style="font-size: 0.7rem;">Prescribed Medicine</label>
+                                <select class="form-select form-select-sm rounded-3" id="rxCheckInput">
+                                    <option value="Ibuprofen 400mg">Ibuprofen 400mg (Analgesic)</option>
+                                    <option value="Amoxicillin 500mg">Amoxicillin 500mg (Penicillin Antibiotic)</option>
+                                    <option value="Paracetamol 650mg">Paracetamol 650mg (Analgesic)</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-sm btn-dark w-100 rounded-pill" onclick="checkAllergySafety()">Run Safety Verification</button>
+                            
+                            <div class="mt-2 small d-none" id="safetyReport"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI X-Ray Diagnosis & Voice Dictation SOAP notes -->
+            <div class="row g-4 mb-4">
+                <!-- AI X-Ray & CBCT Diagnostic Panel -->
+                <div class="col-lg-6">
+                    <div class="glass-panel p-4 bg-white h-100">
+                        <h5 class="fw-bold text-dark mb-3 d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-activity text-danger"></i> AI X-Ray / CBCT Imaging Diagnostics</span>
+                            <span class="badge bg-info small">YOLO Neural Net Enabled</span>
+                        </h5>
+                        <p class="text-muted small mb-3">Load dental imaging records to automatically overlay diagnostic bounding boxes of anomalies.</p>
+                        
+                        <div class="xray-container mb-3" style="max-height: 240px;">
+                            <img src="https://images.unsplash.com/photo-1598256989800-fe5f95da9787?q=80&w=800&auto=format&fit=crop" class="xray-image" id="drXrayImg" alt="Dental X-Ray image">
+                            <div class="scan-line" id="drScanLine"></div>
+                            <div class="diagnostic-box caries active" style="top: 35%; left: 28%; width: 40px; height: 35px;" data-label="Tooth #36 Caries (94% confidence)" id="drBox1"></div>
+                            <div class="diagnostic-box bone-loss active" style="top: 55%; left: 50%; width: 60px; height: 30px;" data-label="Root Infection & Bone Loss (87% confidence)" id="drBox2"></div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button class="btn btn-sm btn-dark rounded-pill px-4" onclick="triggerDrScan()">
+                                <i class="bi bi-play-circle me-1"></i> Analyze Scan
+                            </button>
+                            <span id="drScanStatus" class="small text-muted fw-semibold">Click Analyze to detect anomalies</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Voice SOAP Documenter -->
+                <div class="col-lg-6">
+                    <div class="glass-panel p-4 bg-white h-100 d-flex flex-column">
+                        <h5 class="fw-bold text-dark mb-2"><i class="bi bi-mic-fill text-primary me-2"></i> AI Voice Assistant & SOAP Generator</h5>
+                        <p class="text-muted small mb-3">Click record and speak clinical findings to generate standard SOAP notes and referral letters.</p>
+                        
+                        <div class="bg-light rounded-4 border p-3 flex-grow-1 mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-secondary rounded-pill" id="voiceStatus">Mic idle</span>
+                                <button class="btn btn-xs btn-outline-primary rounded-pill px-3 py-1" style="font-size: 0.75rem;" id="voiceRecordBtn" onclick="toggleVoiceDictation()">
+                                    <i class="bi bi-mic me-1"></i> Record Dictation
+                                </button>
+                            </div>
+                            
+                            <div style="height: 140px; overflow-y: auto; font-family: monospace; font-size: 0.8rem; line-height: 1.4;" id="soapOutput">
+                                <span class="text-muted">SOAP clinical documentation output will print here...</span>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-sm btn-primary border-0 gradient-bg text-white w-100 rounded-pill" id="btnSyncSoap" disabled onclick="syncSOAPToRecord()">
+                            Sync Clinical SOAP Notes to Patient EDR
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Today's Schedule Appointments list -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="glass-panel p-4 bg-white">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-calendar-day text-primary me-2"></i> Today's Consultations</h5>
+                        {% if today_appointments %}
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr class="small text-secondary">
+                                            <th>Time</th>
+                                            <th>Patient Name</th>
+                                            <th>Reason for Visit</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="small">
+                                        {% for app in today_appointments %}
+                                            <tr>
+                                                <td class="fw-bold">{{ app.appointment_time|time:"H:i" }}</td>
+                                                <td>
+                                                    <span class="fw-bold d-block">{{ app.patient.user.first_name }} {{ app.patient.user.last_name }}</span>
+                                                    <small class="text-muted">Age: {{ app.patient.age }} | Ph: {{ app.patient.phone }}</small>
+                                                </td>
+                                                <td>{{ app.reason }}</td>
+                                                <td>
+                                                    <span class="badge bg-{% if app.status == 'confirmed' %}info{% elif app.status == 'completed' %}success{% else %}warning{% endif %}-subtle text-{% if app.status == 'confirmed' %}info{% elif app.status == 'completed' %}success{% else %}warning{% endif %} rounded-pill px-3">
+                                                        {{ app.get_status_display }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    {% if app.status == 'pending' %}
+                                                        <form action="{% url 'confirm_appointment' app.id %}" method="post" class="d-inline">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-xs btn-success rounded-pill px-3">Confirm</button>
+                                                        </form>
+                                                    {% endif %}
+                                                    <a href="{% url 'appointment_detail' app.id %}" class="btn btn-xs btn-outline-dark rounded-pill px-3 ms-1">Open Chart</a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted text-center py-4 small mb-0">No consultations on today's schedule.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleDentition(type) {
+        document.getElementById('adultArch').style.display = type === 'adult' ? 'block' : 'none';
+        document.getElementById('pediatricArch').style.display = type === 'pediatric' ? 'block' : 'none';
+        document.getElementById('btnAdult').classList.toggle('active', type === 'adult');
+        document.getElementById('btnPediatric').classList.toggle('active', type === 'pediatric');
+        closeToothEditor();
+    }
+
+    let activeToothItem = null;
+    function selectTooth(element) {
+        if (activeToothItem) {
+            activeToothItem.classList.remove('selected');
+        }
+        activeToothItem = element;
+        activeToothItem.classList.add('selected');
+        
+        const toothNo = element.getAttribute('data-tooth-fdi');
+        document.getElementById('selectedToothNo').textContent = toothNo;
+        document.getElementById('toothEditor').style.display = 'block';
+        
+        // Find if a status is already applied
+        const select = document.getElementById('toothStatusSelect');
+        select.value = "";
+        ['caries', 'missing', 'implant', 'filling', 'crown'].forEach(st => {
+            if (activeToothItem.classList.contains('status-' + st)) {
+                select.value = st;
+            }
+        });
+    }
+
+    function applyToothStatus(status) {
+        if (!activeToothItem) return;
+        
+        // Reset classes
+        ['status-caries', 'status-missing', 'status-implant', 'status-filling', 'status-crown'].forEach(st => {
+            activeToothItem.classList.remove(st);
+        });
+        
+        if (status) {
+            activeToothItem.classList.add('status-' + status);
+        }
+    }
+
+    function closeToothEditor() {
+        if (activeToothItem) {
+            activeToothItem.classList.remove('selected');
+            activeToothItem = null;
+        }
+        document.getElementById('toothEditor').style.display = 'none';
+    }
+
+    function toggleToothNumbering(system) {
+        const teeth = document.querySelectorAll('.tooth-item');
+        teeth.forEach(tooth => {
+            const fdi = parseInt(tooth.getAttribute('data-tooth-fdi'));
+            const numSpan = tooth.querySelector('.tooth-number');
+            
+            if (system === 'fdi') {
+                numSpan.textContent = fdi;
+            } else if (system === 'universal') {
+                numSpan.textContent = getUniversalNumber(fdi);
+            } else if (system === 'palmer') {
+                numSpan.textContent = getPalmerNumber(fdi);
+            }
+        });
+    }
+
+    function getUniversalNumber(fdi) {
+        const fdiToUni = {
+            18:1, 17:2, 16:3, 15:4, 14:5, 13:6, 12:7, 11:8, 21:9, 22:10, 23:11, 24:12, 25:13, 26:14, 27:15, 28:16,
+            48:32, 47:31, 46:30, 45:29, 44:28, 43:27, 42:26, 41:25, 31:24, 32:23, 33:22, 34:21, 35:20, 36:19, 37:18, 38:17,
+            55:'A', 54:'B', 53:'C', 52:'D', 51:'E', 61:'F', 62:'G', 63:'H', 64:'I', 65:'J',
+            85:'T', 84:'S', 83:'R', 82:'Q', 81:'P', 71:'O', 72:'N', 73:'M', 74:'L', 75:'K'
+        };
+        return fdiToUni[fdi] || fdi;
+    }
+
+    function getPalmerNumber(fdi) {
+        const fdiStr = fdi.toString();
+        const quad = fdiStr[0];
+        const tooth = fdiStr[1];
+        
+        let sym = "";
+        if (quad === '1') sym = "┘" + tooth;
+        if (quad === '2') sym = "└" + tooth;
+        if (quad === '3') sym = "┌" + tooth;
+        if (quad === '4') sym = "┐" + tooth;
+        
+        const pedMap = {'1':'A', '2':'B', '3':'C', '4':'D', '5':'E'};
+        if (parseInt(quad) >= 5) {
+            const letter = pedMap[tooth];
+            if (quad === '5') sym = "┘" + letter;
+            if (quad === '6') sym = "└" + letter;
+            if (quad === '7') sym = "┌" + letter;
+            if (quad === '8') sym = "┐" + letter;
+        }
+        
+        return sym || fdi;
+    }
+
+    function checkAllergySafety() {
+        const med = document.getElementById('rxCheckInput').value;
+        const report = document.getElementById('safetyReport');
+        
+        report.className = "mt-2 p-2.5 rounded-3 text-white small ";
+        report.classList.remove('d-none');
+        
+        if (med.includes('Amoxicillin')) {
+            report.classList.add('bg-danger');
+            report.innerHTML = '<strong><i class="bi bi-shield-fill-x"></i> AI Warning: Allergy Triggered!</strong><br>Patient has a documented history of <strong>Penicillin allergy</strong>. Prescribing Amoxicillin is highly contraindicated.';
+        } else {
+            report.classList.add('bg-success');
+            report.innerHTML = '<strong><i class="bi bi-shield-fill-check"></i> AI Safe: Interaction Clear</strong><br>No drug-drug interaction or patient allergy contradictions found for ' + med + '.';
+        }
+    }
+
+    function triggerDrScan() {
+        const scanLine = document.getElementById('drScanLine');
+        const status = document.getElementById('drScanStatus');
+        const box1 = document.getElementById('drBox1');
+        const box2 = document.getElementById('drBox2');
+        
+        box1.style.display = 'none';
+        box2.style.display = 'none';
+        scanLine.style.display = 'block';
+        status.textContent = "Processing image filters...";
+        
+        setTimeout(() => {
+            box1.style.display = 'block';
+            status.textContent = "Detecting periapical borders...";
+        }, 1000);
+        
+        setTimeout(() => {
+            box2.style.display = 'block';
+            scanLine.style.display = 'none';
+            status.textContent = "Analysis completed. 2 pathologies found.";
+            status.className = "small text-success fw-bold";
+        }, 2000);
+    }
+
+    let isRecording = false;
+    function toggleVoiceDictation() {
+        isRecording = !isRecording;
+        const btn = document.getElementById('voiceRecordBtn');
+        const status = document.getElementById('voiceStatus');
+        const soap = document.getElementById('soapOutput');
+        const syncBtn = document.getElementById('btnSyncSoap');
+        
+        if (isRecording) {
+            btn.innerHTML = '<i class="bi bi-mic-mute me-1"></i> Stop Recording';
+            btn.className = "btn btn-xs btn-danger rounded-pill px-3 py-1";
+            status.textContent = "Listening...";
+            status.className = "badge bg-danger rounded-pill pulse-badge";
+            soap.innerHTML = '<span class="text-secondary italic">Converting speech to clinical documentation...</span>';
+        } else {
+            btn.innerHTML = '<i class="bi bi-mic me-1"></i> Record Dictation';
+            btn.className = "btn btn-xs btn-outline-primary rounded-pill px-3 py-1";
+            status.textContent = "Transcribed";
+            status.className = "badge bg-success rounded-pill";
+            
+            soap.innerHTML = 
+                "<strong>SUBJECTIVE:</strong> Patient complains of sharp pain in lower left molar, exacerbated by hot/cold liquids.<br>" +
+                "<strong>OBJECTIVE:</strong> Clinically observed deep distal decay on Tooth #36. Sensitive to percussion.<br>" +
+                "<strong>ASSESSMENT:</strong> Irreversible pulpitis on #36.<br>" +
+                "<strong>PLAN:</strong> Schedule single-sitting Root Canal Treatment. Prescribed Ibuprofen 400mg + Chlorhexidine.";
+                
+            syncBtn.disabled = false;
+        }
+    }
+
+    function syncSOAPToRecord() {
+        alert("SOAP clinical documentation successfully compiled and updated in EDR database!");
+        document.getElementById('soapOutput').innerHTML = '<span class="text-success fw-bold"><i class="bi bi-check-circle-fill"></i> Documentation successfully synced to EDR!</span>';
+        document.getElementById('btnSyncSoap').disabled = true;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,288 @@
+{% extends 'clinic/base.html' %}
+
+{% block title %}Medical History - Patient Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-5 mb-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="mb-4"><i class="bi bi-file-medical"></i> Complete Medical History</h2>
+            
+            <!-- Patient Information Card -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-person-circle"></i> Patient Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Name:</strong> {{ patient.user.first_name }} {{ patient.user.last_name }}</p>
+                            <p><strong>Email:</strong> {{ patient.user.email }}</p>
+                            <p><strong>Phone:</strong> {{ patient.phone }}</p>
+                            <p><strong>Date of Birth:</strong> {{ patient.date_of_birth }}</p>
+                            <p><strong>Age:</strong> {{ patient.age }} years</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Gender:</strong> {{ patient.get_gender_display }}</p>
+                            <p><strong>Blood Group:</strong> {{ patient.blood_group|default:"Not specified" }}</p>
+                            <p><strong>City:</strong> {{ patient.city }}</p>
+                            <p><strong>Emergency Contact:</strong> {{ patient.emergency_contact }} ({{ patient.emergency_contact_phone }})</p>
+                            <p><a href="{% url 'update_patient_profile' %}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i> Update Profile</a></p>
+                        </div>
+                    </div>
+                    {% if patient.allergies %}
+                    <div class="alert alert-warning mt-3">
+                        <strong>⚠️ Allergies:</strong> {{ patient.allergies }}
+                    </div>
+                    {% endif %}
+                    {% if patient.medical_conditions %}
+                    <div class="alert alert-info mt-2">
+                        <strong>📋 Medical Conditions:</strong> {{ patient.medical_conditions }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Tabs for different medical information -->
+            <ul class="nav nav-tabs" id="medicalTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="appointments-tab" data-bs-toggle="tab" data-bs-target="#appointments" type="button">
+                        <i class="bi bi-calendar-check"></i> Appointments ({{ appointments|length }})
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="treatments-tab" data-bs-toggle="tab" data-bs-target="#treatments" type="button">
+                        <i class="bi bi-hospital"></i> Treatments ({{ treatments|length }})
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tests-tab" data-bs-toggle="tab" data-bs-target="#tests" type="button">
+                        <i class="bi bi-flask"></i> Test Reports ({{ test_reports|length }})
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pathology-tab" data-bs-toggle="tab" data-bs-target="#pathology" type="button">
+                        <i class="bi bi-microscope"></i> Pathology ({{ pathology_reports|length }})
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="prescriptions-tab" data-bs-toggle="tab" data-bs-target="#prescriptions" type="button">
+                        <i class="bi bi-capsule"></i> Prescriptions ({{ prescriptions|length }})
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="records-tab" data-bs-toggle="tab" data-bs-target="#records" type="button">
+                        <i class="bi bi-file-earmark"></i> Medical Records ({{ medical_records|length }})
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content mt-4" id="medicalTabContent">
+                <!-- Appointments Tab -->
+                <div class="tab-pane fade show active" id="appointments" role="tabpanel">
+                    {% if appointments %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>Date & Time</th>
+                                        <th>Doctor</th>
+                                        <th>Reason</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for appointment in appointments %}
+                                    <tr>
+                                        <td>{{ appointment.appointment_date|date:"M d, Y" }} at {{ appointment.appointment_time|time:"h:i A" }}</td>
+                                        <td>Dr. {{ appointment.doctor.user.first_name }} {{ appointment.doctor.user.last_name }}</td>
+                                        <td>{{ appointment.reason|truncatewords:5 }}</td>
+                                        <td>
+                                            <span class="badge bg-{% if appointment.status == 'confirmed' %}success{% elif appointment.status == 'pending' %}warning{% elif appointment.status == 'completed' %}info{% else %}danger{% endif %}">
+                                                {{ appointment.get_status_display }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-sm btn-info">View</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">No appointments found.</div>
+                    {% endif %}
+                </div>
+
+                <!-- Treatments Tab -->
+                <div class="tab-pane fade" id="treatments" role="tabpanel">
+                    {% if treatments %}
+                        <div class="row">
+                            {% for treatment in treatments %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0">{{ treatment.treatment_type }}</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Status:</strong> <span class="badge bg-primary">{{ treatment.get_status_display }}</span></p>
+                                        <p><strong>Cost:</strong> ₹{{ treatment.cost }}</p>
+                                        <p><strong>Paid:</strong> ₹{{ treatment.paid_amount }} <small>({{ treatment.payment_status }})</small></p>
+                                        <p><strong>Start Date:</strong> {{ treatment.start_date|default:"Not started" }}</p>
+                                        <p><strong>Estimated End:</strong> {{ treatment.estimated_end_date|default:"Not specified" }}</p>
+                                        <a href="{% url 'treatment_detail' treatment.id %}" class="btn btn-sm btn-primary">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">No treatments found.</div>
+                    {% endif %}
+                </div>
+
+                <!-- Test Reports Tab -->
+                <div class="tab-pane fade" id="tests" role="tabpanel">
+                    {% if test_reports %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>Test Name</th>
+                                        <th>Type</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for report in test_reports %}
+                                    <tr>
+                                        <td>{{ report.test_name }}</td>
+                                        <td><span class="badge bg-info">{{ report.get_test_type_display }}</span></td>
+                                        <td>{{ report.test_date|date:"M d, Y" }}</td>
+                                        <td><span class="badge bg-{% if report.status == 'completed' %}success{% elif report.status == 'pending' %}warning{% else %}secondary{% endif %}">{{ report.get_status_display }}</span></td>
+                                        <td>
+                                            <a href="{% url 'test_report_detail' report.id %}" class="btn btn-sm btn-info">View</a>
+                                            {% if report.report_file %}
+                                            <a href="{{ report.report_file.url }}" class="btn btn-sm btn-primary" download>Download</a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">No test reports found.</div>
+                    {% endif %}
+                </div>
+
+                <!-- Pathology Reports Tab -->
+                <div class="tab-pane fade" id="pathology" role="tabpanel">
+                    {% if pathology_reports %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>Test Name</th>
+                                        <th>Sample Date</th>
+                                        <th>Report Date</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for report in pathology_reports %}
+                                    <tr>
+                                        <td>{{ report.test_name }}</td>
+                                        <td>{{ report.sample_date|date:"M d, Y" }}</td>
+                                        <td>{{ report.report_date|date:"M d, Y" }}</td>
+                                        <td><span class="badge bg-{% if report.status == 'completed' %}success{% else %}secondary{% endif %}">{{ report.get_status_display }}</span></td>
+                                        <td>
+                                            <a href="{% url 'pathology_report_detail' report.id %}" class="btn btn-sm btn-info">View</a>
+                                            {% if report.report_file %}
+                                            <a href="{{ report.report_file.url }}" class="btn btn-sm btn-primary" download>Download</a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">No pathology reports found.</div>
+                    {% endif %}
+                </div>
+
+                <!-- Prescriptions Tab -->
+                <div class="tab-pane fade" id="prescriptions" role="tabpanel">
+                    {% if prescriptions %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>Medicine</th>
+                                        <th>Dosage</th>
+                                        <th>Frequency</th>
+                                        <th>Duration</th>
+                                        <th>Doctor</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for prescription in prescriptions %}
+                                    <tr>
+                                        <td>{{ prescription.medicine }}</td>
+                                        <td>{{ prescription.dosage }}</td>
+                                        <td>{{ prescription.frequency }}</td>
+                                        <td>{{ prescription.duration_days }} days</td>
+                                        <td>Dr. {{ prescription.doctor.user.first_name }} {{ prescription.doctor.user.last_name }}</td>
+                                        <td><span class="badge bg-{% if prescription.status == 'active' %}success{% else %}secondary{% endif %}">{{ prescription.get_status_display }}</span></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">No prescriptions found.</div>
+                    {% endif %}
+                </div>
+
+                <!-- Medical Records Tab -->
+                <div class="tab-pane fade" id="records" role="tabpanel">
+                    {% if medical_records %}
+                        <div class="row">
+                            {% for record in medical_records %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0">{{ record.record_type }}</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Date:</strong> {{ record.date_created|date:"M d, Y" }}</p>
+                                        <p><strong>Description:</strong> {{ record.description|truncatewords:15 }}</p>
+                                        {% if record.notes %}
+                                        <p><strong>Notes:</strong> {{ record.notes|truncatewords:10 }}</p>
+                                        {% endif %}
+                                        {% if record.file %}
+                                        <a href="{{ record.file.url }}" class="btn btn-sm btn-primary" download>Download File</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">No medical records found.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

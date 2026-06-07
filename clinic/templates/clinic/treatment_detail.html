@@ -1,0 +1,159 @@
+{% extends 'clinic/base.html' %}
+
+{% block title %}Treatment Details - Dr. Annops Dental Clinic{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">{{ treatment.treatment_type }}</h4>
+                        <span class="badge" style="background-color: var(--primary-color);">{{ treatment.get_status_display }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Appointment</h6>
+                            <p>
+                                <strong>Dr. {{ treatment.appointment.doctor.user.first_name }} {{ treatment.appointment.doctor.user.last_name }}</strong><br>
+                                {{ treatment.appointment.appointment_date|date:"d M Y H:i" }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Patient</h6>
+                            <p>
+                                <strong>{{ treatment.appointment.patient.user.first_name }} {{ treatment.appointment.patient.user.last_name }}</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h6>Treatment Description</h6>
+                    <p>{{ treatment.description|linebreaks }}</p>
+
+                    <hr>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Timeline</h6>
+                            <p>
+                                <strong>Start Date:</strong> {{ treatment.start_date|default:"Not started" }}<br>
+                                <strong>Est. End Date:</strong> {{ treatment.estimated_end_date|default:"N/A" }}<br>
+                                <strong>Actual End Date:</strong> {{ treatment.actual_end_date|default:"Ongoing" }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Financial Details</h6>
+                            <p>
+                                <strong>Total Cost:</strong> ${{ treatment.cost }}<br>
+                                <strong>Paid Amount:</strong> ${{ treatment.paid_amount }}<br>
+                                <strong>Pending Amount:</strong> ${{ treatment.pending_amount }}<br>
+                                <strong>Payment Status:</strong> <span class="badge bg-warning">{{ treatment.payment_status }}</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="progress mb-3">
+                        {% widthratio treatment.paid_amount treatment.cost 100 as progress %}
+                        <div class="progress-bar" role="progressbar" style="width: {{ progress }}%" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <small class="text-muted">Payment Progress: {{ progress }}%</small>
+
+                    {% if treatment.notes %}
+                        <hr>
+                        <h6>Doctor's Notes</h6>
+                        <p>{{ treatment.notes|linebreaks }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if medications %}
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Prescribed Medications</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Medicine</th>
+                                        <th>Dosage</th>
+                                        <th>Frequency</th>
+                                        <th>Duration</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for medication in medications %}
+                                        <tr>
+                                            <td><strong>{{ medication.medicine_name }}</strong></td>
+                                            <td>{{ medication.dosage }}</td>
+                                            <td>{{ medication.get_frequency_display }}</td>
+                                            <td>{{ medication.duration_days }} days</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4">
+                                                <small>
+                                                    <strong>Instructions:</strong> {{ medication.instructions }}<br>
+                                                    <strong>Side Effects:</strong> {{ medication.side_effects }}
+                                                </small>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Treatment Progress</h6>
+                </div>
+                <div class="card-body">
+                    {% if treatment.status == 'recommended' %}
+                        <div class="alert alert-info mb-3">
+                            <i class="bi bi-info-circle"></i> Treatment has been recommended. Awaiting patient approval.
+                        </div>
+                    {% elif treatment.status == 'in_progress' %}
+                        <div class="alert alert-primary mb-3">
+                            <i class="bi bi-hourglass-split"></i> Treatment is currently in progress.
+                        </div>
+                    {% elif treatment.status == 'completed' %}
+                        <div class="alert alert-success mb-3">
+                            <i class="bi bi-check-circle"></i> Treatment has been completed successfully!
+                        </div>
+                    {% elif treatment.status == 'on_hold' %}
+                        <div class="alert alert-warning mb-3">
+                            <i class="bi bi-pause-circle"></i> Treatment is on hold.
+                        </div>
+                    {% elif treatment.status == 'cancelled' %}
+                        <div class="alert alert-danger mb-3">
+                            <i class="bi bi-x-circle"></i> Treatment has been cancelled.
+                        </div>
+                    {% endif %}
+
+                    <h6 class="mt-3">Payment Progress</h6>
+                    <div class="progress mb-2">
+                        {% widthratio treatment.paid_amount treatment.cost 100 as progress %}
+                        <div class="progress-bar" role="progressbar" style="width: {{ progress }}%"></div>
+                    </div>
+                    <p class="mb-3">
+                        <small class="text-muted">{{ progress }}% Complete<br>
+                        Paid: ${{ treatment.paid_amount }} / ${{ treatment.cost }}</small>
+                    </p>
+
+                    <a href="{% url 'patient_treatments' %}" class="btn btn-outline-secondary btn-sm w-100">Back to Treatments</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

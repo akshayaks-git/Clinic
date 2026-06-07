@@ -1,0 +1,348 @@
+{% extends 'clinic/base.html' %}
+{% load static %}
+
+{% block title %}Patient Portal - Dr. Anoop's Dental Clinic{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar Navigation -->
+        <div class="col-lg-2 p-0 sidebar-nav d-none d-lg-block">
+            <a href="{% url 'patient_dashboard' %}" class="sidebar-link active">
+                <i class="bi bi-speedometer2"></i> Portal Home
+            </a>
+            <a href="{% url 'patient_appointments' %}" class="sidebar-link">
+                <i class="bi bi-calendar-check"></i> Appointments
+            </a>
+            <a href="{% url 'patient_treatments' %}" class="sidebar-link">
+                <i class="bi bi-hospital"></i> Treatments
+            </a>
+            <a href="{% url 'patient_prescriptions' %}" class="sidebar-link">
+                <i class="bi bi-capsule"></i> Prescriptions
+            </a>
+            <a href="{% url 'patient_test_reports' %}" class="sidebar-link">
+                <i class="bi bi-flask"></i> Test Reports
+            </a>
+            <a href="{% url 'patient_pathology_reports' %}" class="sidebar-link">
+                <i class="bi bi-microscope"></i> Pathology
+            </a>
+            <a href="{% url 'medical_records' %}" class="sidebar-link">
+                <i class="bi bi-file-earmark-medical"></i> Medical Records
+            </a>
+            <a href="{% url 'profile' %}" class="sidebar-link">
+                <i class="bi bi-person-circle"></i> Profile Setting
+            </a>
+        </div>
+
+        <!-- Main Dashboard Content -->
+        <div class="col-lg-10 col-md-12 p-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-extrabold mb-1">Welcome back, {{ patient.user.first_name }}!</h2>
+                    <p class="text-muted small">Your unique Patient ID: <strong class="text-primary">ANUPAM-P-{{ patient.id|stringformat:"04d" }}</strong></p>
+                </div>
+                <div>
+                    <a href="{% url 'book_appointment' %}" class="btn btn-primary rounded-pill border-0 gradient-bg text-white px-4 py-2.5 shadow-md">
+                        <i class="bi bi-plus-circle-fill me-1"></i> Book New Appointment
+                    </a>
+                </div>
+            </div>
+
+            <!-- Warning/Alert for Allergies or Medical Conditions -->
+            {% if patient.medical_conditions or patient.allergies %}
+                <div class="alert alert-warning border-0 rounded-4 shadow-sm mb-4 p-3 d-flex align-items-center gap-3">
+                    <span class="d-flex align-items-center justify-content-center bg-warning text-dark rounded-circle" style="width: 44px; height: 44px; flex-shrink: 0;">
+                        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                    </span>
+                    <div>
+                        <h6 class="mb-0 fw-bold text-dark">Important Medical Alerts on Your Record</h6>
+                        <span class="small text-secondary">
+                            {% if patient.medical_conditions %}<strong>Conditions:</strong> {{ patient.medical_conditions }}. {% endif %}
+                            {% if patient.allergies %}<strong>Allergies:</strong> {{ patient.allergies }}. {% endif %}
+                        </span>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Statistics Row -->
+            <div class="row g-3 mb-4">
+                <div class="col-md">
+                    <div class="glass-panel p-3 bg-white text-center h-100">
+                        <h4 class="fw-extrabold mb-1 text-primary">{{ total_appointments }}</h4>
+                        <span class="text-muted small">Total Visits</span>
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="glass-panel p-3 bg-white text-center h-100">
+                        <h4 class="fw-extrabold mb-1 text-success">{{ completed_treatments }}</h4>
+                        <span class="text-muted small">Completed Treatments</span>
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="glass-panel p-3 bg-white text-center h-100">
+                        <h4 class="fw-extrabold mb-1 text-warning">{{ pending_treatments }}</h4>
+                        <span class="text-muted small">Active Treatments</span>
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="glass-panel p-3 bg-white text-center h-100">
+                        <h4 class="fw-extrabold mb-1 text-info">{{ patient.age }}</h4>
+                        <span class="text-muted small">Age (Blood: {{ patient.blood_group|default:"N/A" }})</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <!-- Upcoming Visits -->
+                <div class="col-lg-6">
+                    <div class="glass-panel p-4 bg-white h-100">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-calendar3 text-primary me-2"></i> Upcoming Appointments</h5>
+                        {% if upcoming_appointments %}
+                            <div class="list-group list-group-flush">
+                                {% for app in upcoming_appointments %}
+                                    <div class="list-group-item px-0 py-3 border-bottom d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1 fw-bold">Dr. {{ app.doctor.user.first_name }} {{ app.doctor.user.last_name }}</h6>
+                                            <p class="mb-0 small text-muted">
+                                                <i class="bi bi-clock me-1"></i> {{ app.appointment_date|date:"d M Y" }} at {{ app.appointment_time|time:"H:i" }}
+                                            </p>
+                                            <small class="text-secondary">{{ app.reason|truncatewords:6 }}</small>
+                                        </div>
+                                        <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1.5 small">Confirmed</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4 text-muted">
+                                <i class="bi bi-calendar-x fs-1 mb-2 d-block"></i>
+                                <span class="small d-block">No upcoming sessions.</span>
+                                <a href="{% url 'book_appointment' %}" class="btn btn-sm btn-outline-primary mt-2 rounded-pill px-3">Schedule One</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Active Treatment & Costs -->
+                <div class="col-lg-6">
+                    <div class="glass-panel p-4 bg-white h-100">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-hospital text-success me-2"></i> Treatment Costs & Invoices</h5>
+                        {% if treatments %}
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr class="small text-secondary">
+                                            <th>Treatment Type</th>
+                                            <th>Cost</th>
+                                            <th>Paid</th>
+                                            <th>Balance</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="small">
+                                        {% for t in treatments %}
+                                            <tr>
+                                                <td class="fw-bold">{{ t.treatment_type }}</td>
+                                                <td>₹{{ t.cost|floatformat:0 }}</td>
+                                                <td class="text-success">₹{{ t.paid_amount|floatformat:0 }}</td>
+                                                <td class="text-danger fw-semibold">₹{{ t.pending_amount|floatformat:0 }}</td>
+                                                <td>
+                                                    <span class="badge bg-{% if t.payment_status == 'Paid' %}success{% elif t.payment_status == 'Partial' %}warning{% else %}danger{% endif %}-subtle text-{% if t.payment_status == 'Paid' %}success{% elif t.payment_status == 'Partial' %}warning{% else %}danger{% endif %} rounded-pill">
+                                                        {{ t.payment_status }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted text-center py-4 small">No bills or treatment records yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- EDR & Lab Order tracking -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6">
+                    <div class="glass-panel p-4 bg-white h-100">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-box-seam-fill text-warning me-2"></i> Dental Laboratory Orders</h5>
+                        <p class="text-muted small">Real-time status of your custom crowns, bridges, and aligners from the fabrication lab.</p>
+                        
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item px-0 py-3 border-bottom d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1 fw-bold">Zirconia Crown (Tooth #36)</h6>
+                                    <span class="small text-muted">Ordered by Dr. Renjith Raj</span>
+                                </div>
+                                <span class="badge bg-success-subtle text-success rounded-pill">Crown Fabricated</span>
+                            </div>
+                            <div class="list-group-item px-0 py-3 border-bottom d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1 fw-bold">Clear Aligner Trays (Set 1-10)</h6>
+                                    <span class="small text-muted">Ordered by Dr. Terry Thomas</span>
+                                </div>
+                                <span class="badge bg-info-subtle text-info rounded-pill">Shipped to Clinic</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prescriptions and Diagnostics -->
+                <div class="col-lg-6">
+                    <div class="glass-panel p-4 bg-white h-100">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-capsule text-danger me-2"></i> E-Prescriptions</h5>
+                        {% if prescriptions %}
+                            <div class="list-group list-group-flush">
+                                {% for rx in prescriptions %}
+                                    <div class="list-group-item px-0 py-2.5 border-bottom">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <strong class="text-dark">{{ rx.medicine }}</strong>
+                                            <span class="badge bg-{% if rx.status == 'active' %}success{% else %}secondary{% endif %}-subtle text-{% if rx.status == 'active' %}success{% else %}secondary{% endif %} rounded-pill">{{ rx.get_status_display }}</span>
+                                        </div>
+                                        <span class="small text-muted d-block">{{ rx.dosage }} - {{ rx.frequency }} ({{ rx.duration_days }} Days)</span>
+                                        {% if rx.instructions %}
+                                            <small class="text-secondary d-block mt-1"><i class="bi bi-info-circle me-1"></i>{{ rx.instructions }}</small>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted text-center py-4 small">No prescribed medications.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Smile Design Sandbox & Tele-Dentistry Room -->
+            <div class="row g-4" id="ai-tele-portals">
+                <!-- AI Smile Design -->
+                <div class="col-lg-6">
+                    <div class="glass-panel p-4 bg-white h-100">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-magic text-warning me-2"></i> Interactive Smile Makeover Sandbox</h5>
+                        <p class="text-muted small">Select options below to preview a simulated transformation of your dental aesthetic.</p>
+                        
+                        <div class="mb-3 d-flex flex-wrap gap-2 justify-content-center">
+                            <div class="form-check form-check-inline bg-light p-2 px-3 rounded-pill border">
+                                <input class="form-check-input" type="checkbox" id="optWhitening" checked onchange="updateSmileSimulation()">
+                                <label class="form-check-input-label small fw-bold" for="optWhitening">Laser Whitening</label>
+                            </div>
+                            <div class="form-check form-check-inline bg-light p-2 px-3 rounded-pill border">
+                                <input class="form-check-input" type="checkbox" id="optVeneers" onchange="updateSmileSimulation()">
+                                <label class="form-check-input-label small fw-bold" for="optVeneers">Porcelain Veneers</label>
+                            </div>
+                            <div class="form-check form-check-inline bg-light p-2 px-3 rounded-pill border">
+                                <input class="form-check-input" type="checkbox" id="optAligners" onchange="updateSmileSimulation()">
+                                <label class="form-check-input-label small fw-bold" for="optAligners">Orthodontic Aligner</label>
+                            </div>
+                        </div>
+
+                        <div class="smile-comparison mb-3" style="height: 250px;">
+                            <div class="smile-image smile-before"></div>
+                            <div class="smile-image smile-after" id="portalSmileAfter"></div>
+                            <input type="range" class="smile-slider" id="portalSmileRange" min="0" max="100" value="50" oninput="slidePortalSmile(this.value)">
+                        </div>
+                        <div class="text-center">
+                            <span class="small text-muted"><i class="bi bi-arrow-left-right"></i> Drag center line to check makeover</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tele-Dentistry Consulting Room -->
+                <div class="col-lg-6">
+                    <div class="glass-panel p-4 bg-white h-100 d-flex flex-column">
+                        <h5 class="fw-bold text-dark mb-2"><i class="bi bi-camera-video-fill text-danger me-2"></i> Tele-Dentistry consultation lobby</h5>
+                        <p class="text-muted small mb-3">Join a secure video consult with your doctor. Receive instant digital prescriptions and remote advice.</p>
+                        
+                        <div class="video-consult-lobby flex-grow-1" id="teleConsultLobby" style="height: 250px; min-height: 250px;">
+                            <div class="video-grid" id="teleVideoGrid" style="display: none;">
+                                <div class="video-feed">
+                                    <!-- Mock Doctor Feed -->
+                                    <div class="mock-video">👨‍⚕️</div>
+                                    <span class="feed-label">Dr. Anoopkumar R (Chief Dentist)</span>
+                                </div>
+                                <div class="video-feed">
+                                    <!-- Mock Patient Feed -->
+                                    <div class="mock-video">👤</div>
+                                    <span class="feed-label">You (Amal Kumar)</span>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center" id="joinPrompt">
+                                <i class="bi bi-laptop-fill fs-2 text-secondary mb-2"></i>
+                                <h6 class="fw-bold">Virtual Appointment Room</h6>
+                                <p class="text-white-50 small" style="max-width: 300px;">Connect video/audio to join consultation lobby.</p>
+                                <button class="btn btn-sm btn-info rounded-pill px-4 fw-bold" onclick="startConsultationCall()">
+                                    Initialize Video Link
+                                </button>
+                            </div>
+
+                            <div class="controls-bar" id="teleControls" style="display: none;">
+                                <button class="control-btn" id="btnMute" onclick="toggleMute()"><i class="bi bi-mic-fill"></i></button>
+                                <button class="control-btn" id="btnCam" onclick="toggleCam()"><i class="bi bi-camera-video-fill"></i></button>
+                                <button class="control-btn decline" onclick="endConsultationCall()"><i class="bi bi-telephone-x-fill"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Portal Smile design comparison
+    function slidePortalSmile(val) {
+        document.getElementById('portalSmileAfter').style.width = val + '%';
+    }
+
+    function updateSmileSimulation() {
+        const afterImg = document.getElementById('portalSmileAfter');
+        const optW = document.getElementById('optWhitening').checked;
+        const optV = document.getElementById('optVeneers').checked;
+        const optA = document.getElementById('optAligners').checked;
+        
+        let filterVal = "";
+        
+        if (optW) filterVal += "brightness(1.15) contrast(1.05) ";
+        if (optV) filterVal += "saturate(0.9) brightness(1.2) ";
+        if (optA) filterVal += "hue-rotate(15deg) ";
+        
+        if (filterVal === "") filterVal = "none";
+        
+        afterImg.style.filter = filterVal;
+    }
+
+    // Tele-Dentistry Calling Logic
+    function startConsultationCall() {
+        document.getElementById('joinPrompt').style.display = 'none';
+        document.getElementById('teleVideoGrid').style.display = 'grid';
+        document.getElementById('teleControls').style.display = 'flex';
+    }
+
+    function endConsultationCall() {
+        document.getElementById('teleVideoGrid').style.display = 'none';
+        document.getElementById('teleControls').style.display = 'none';
+        document.getElementById('joinPrompt').style.display = 'flex';
+    }
+
+    let isMuted = false;
+    function toggleMute() {
+        isMuted = !isMuted;
+        const btn = document.getElementById('btnMute');
+        btn.innerHTML = isMuted ? '<i class="bi bi-mic-mute-fill"></i>' : '<i class="bi bi-mic-fill"></i>';
+        btn.classList.toggle('btn-danger');
+    }
+
+    let isCamOff = false;
+    function toggleCam() {
+        isCamOff = !isCamOff;
+        const btn = document.getElementById('btnCam');
+        btn.innerHTML = isCamOff ? '<i class="bi bi-camera-video-off-fill"></i>' : '<i class="bi bi-camera-video-fill"></i>';
+        btn.classList.toggle('btn-danger');
+    }
+</script>
+{% endblock %}

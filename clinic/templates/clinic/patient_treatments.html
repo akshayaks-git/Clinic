@@ -1,0 +1,76 @@
+{% extends 'clinic/base.html' %}
+
+{% block title %}My Treatments - Dr. Annops Dental Clinic{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2>My Treatments</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            {% if treatments %}
+                <div class="row">
+                    {% for treatment in treatments %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">{{ treatment.treatment_type }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>
+                                        <strong>Status:</strong> 
+                                        <span class="badge" style="background-color: var(--primary-color);">{{ treatment.get_status_display }}</span>
+                                    </p>
+                                    <p><strong>Doctor:</strong> Dr. {{ treatment.appointment.doctor.user.first_name }} {{ treatment.appointment.doctor.user.last_name }}</p>
+                                    <p><strong>Start Date:</strong> {{ treatment.start_date|default:"Not started" }}</p>
+                                    <p><strong>Est. End Date:</strong> {{ treatment.estimated_end_date|default:"N/A" }}</p>
+
+                                    <hr>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p>
+                                                <strong>Total Cost:</strong><br>
+                                                <span style="color: var(--primary-color); font-size: 1.3rem;">${{ treatment.cost }}</span>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p>
+                                                <strong>Paid Amount:</strong><br>
+                                                <span style="color: var(--success-color); font-size: 1.3rem;">${{ treatment.paid_amount }}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="progress mb-2">
+                                        {% widthratio treatment.paid_amount treatment.cost 100 as progress %}
+                                        <div class="progress-bar" role="progressbar" style="width: {{ progress }}%" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <small class="text-muted">{{ progress }}% Paid</small>
+
+                                    <hr>
+
+                                    <p><strong>Payment Status:</strong> <span class="badge bg-warning">{{ treatment.payment_status }}</span></p>
+                                    {% if treatment.pending_amount > 0 %}
+                                        <p class="text-danger"><strong>Pending Amount: ${{ treatment.pending_amount }}</strong></p>
+                                    {% endif %}
+
+                                    <a href="{% url 'treatment_detail' treatment.id %}" class="btn btn-sm btn-primary w-100">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> No treatments scheduled yet.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
