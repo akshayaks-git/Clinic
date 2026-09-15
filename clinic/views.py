@@ -734,121 +734,144 @@ def admin_dashboard(request):
     if not (request.user.is_staff or request.user.is_superuser):
         messages.error(request, 'You do not have permission to access this page.')
         return redirect('home')
-    
+
     from django.db.models import Sum, Count, Q
-    
+
+    today = datetime.now().date()
+
     # Get statistics
     total_patients = Patient.objects.count()
     total_doctors = Doctor.objects.filter(is_active=True).count()
     total_appointments = Appointment.objects.count()
-    
+    today_appointments = Appointment.objects.filter(appointment_date=today).count()
+    active_doctors = Doctor.objects.filter(is_active=True).count()
+
     # Appointment statistics
     pending_appointments = Appointment.objects.filter(status='pending').count()
     confirmed_appointments = Appointment.objects.filter(status='confirmed').count()
     completed_appointments = Appointment.objects.filter(status='completed').count()
     cancelled_appointments = Appointment.objects.filter(status='cancelled').count()
-    
+
     # Treatment statistics
     total_treatments = Treatment.objects.count()
     completed_treatments = Treatment.objects.filter(status='completed').count()
     pending_treatments = Treatment.objects.filter(status__in=['recommended', 'in_progress']).count()
-    
+
     # Revenue statistics
     total_revenue = Treatment.objects.aggregate(Sum('cost'))['cost__sum'] or 0
     paid_amount = Treatment.objects.aggregate(Sum('paid_amount'))['paid_amount__sum'] or 0
     pending_revenue = total_revenue - paid_amount
-    
+
     # Test and Pathology reports
     total_test_reports = TestReport.objects.count()
     pending_test_reports = TestReport.objects.filter(status='pending').count()
     completed_test_reports = TestReport.objects.filter(status='completed').count()
-    
+
     total_pathology = PathologyReport.objects.count()
     pending_pathology = PathologyReport.objects.filter(status='pending').count()
-    
+
     # Pharmacy statistics
     total_medicines = PharmacyInventory.objects.count()
     expired_medicines = PharmacyInventory.objects.filter(expiry_date__lt=datetime.now().date()).count()
     reorder_needed = PharmacyInventory.objects.filter(
         quantity__lte=models.F('reorder_level')
     ).count()
-    
+
     # Get recent data
     recent_appointments = Appointment.objects.select_related(
         'patient', 'doctor'
     ).order_by('-created_at')[:8]
-    
+
     recent_patients = Patient.objects.select_related('user').order_by('-created_at')[:5]
-    
+
     recent_test_reports = TestReport.objects.select_related(
         'patient'
     ).order_by('-created_at')[:5]
-    
+
     recent_pathology = PathologyReport.objects.select_related(
         'patient'
     ).order_by('-created_at')[:5]
-    
+
     # Top doctors
     top_doctors = Doctor.objects.annotate(
         appointment_count=Count('appointments')
     ).order_by('-appointment_count')[:5]
-    
+
+    top_patients = []
+    for patient in Patient.objects.select_related('user').annotate(
+        visit_count=Count('appointments')
+    ).order_by('-visit_count')[:4]:
+        total_spend = patient.appointments.filter(treatment__isnull=False).aggregate(
+            total=Sum('treatment__cost')
+        )['total'] or 0
+        next_appointment = patient.appointments.filter(
+            appointment_date__gte=today
+        ).order_by('appointment_date', 'appointment_time').first()
+        patient.total_spend = total_spend
+        patient.visit_count = patient.appointments.count()
+        patient.next_appointment = next_appointment
+        top_patients.append(patient)
+
     # Expired medicines alert
     expired_medicines_list = PharmacyInventory.objects.filter(
         expiry_date__lt=datetime.now().date()
     ).order_by('-expiry_date')[:5]
-    
+
     # Medicines needing reorder
     reorder_medicines = PharmacyInventory.objects.filter(
         quantity__lte=models.F('reorder_level')
     ).order_by('quantity')[:5]
-    
+
     context = {
         # Statistics
+        'today': datetime.now(),
         'total_patients': total_patients,
         'total_doctors': total_doctors,
+        'active_doctors': active_doctors,
         'total_appointments': total_appointments,
+        'today_appointments': today_appointments,
         'pending_appointments': pending_appointments,
         'confirmed_appointments': confirmed_appointments,
         'completed_appointments': completed_appointments,
         'cancelled_appointments': cancelled_appointments,
-        
+
         # Treatments
         'total_treatments': total_treatments,
         'completed_treatments': completed_treatments,
         'pending_treatments': pending_treatments,
-        
+
         # Revenue
         'total_revenue': total_revenue,
         'paid_amount': paid_amount,
         'pending_revenue': pending_revenue,
-        
+
         # Test reports
         'total_test_reports': total_test_reports,
         'pending_test_reports': pending_test_reports,
         'completed_test_reports': completed_test_reports,
-        
+
         # Pathology
         'total_pathology': total_pathology,
         'pending_pathology': pending_pathology,
-        
+
         # Pharmacy
         'total_medicines': total_medicines,
         'expired_medicines': expired_medicines,
         'reorder_needed': reorder_needed,
-        
+
         # Recent data
         'recent_appointments': recent_appointments,
         'recent_patients': recent_patients,
         'recent_test_reports': recent_test_reports,
         'recent_pathology': recent_pathology,
         'top_doctors': top_doctors,
-        
+        'top_patients': top_patients,
+
         # Alerts
         'expired_medicines_list': expired_medicines_list,
         'reorder_medicines': reorder_medicines,
     }
-    
+
     return render(request, 'clinic/admin_dashboard.html', context)
 
 
